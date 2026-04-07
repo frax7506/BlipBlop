@@ -11,15 +11,15 @@ project("BlipBlop")
 	files("../BlipBlop/*.cpp")
 	pchheader("stdafx.h")
 	pchsource("../BlipBlop/stdafx.cpp")
-	objdir("../Intermediate/BlipBlop")
+	objdir("../Intermediate")
 	
 	filter({"configurations:Debug"})
 		targetname("BlipBlop_Debug")
-		targetdir("../Output/BlipBlop")
+		targetdir("../Output")
 	
 	filter({"configurations:Release"})
 		targetname("BlipBlop_Release")
-		targetdir("../Output/BlipBlop")
+		targetdir("../Output")
 		
 	filter({"configurations:*"})
 		
