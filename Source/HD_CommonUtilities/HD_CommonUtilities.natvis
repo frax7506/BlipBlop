@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AutoVisualizer xmlns="http://schemas.microsoft.com/vstudio/debugger/natvis/2010">
+	
+	<Type Name="HD_GrowingArray&lt;*&gt;">
+		<DisplayString>{{size = {mySize}}}</DisplayString>
+		<Expand>
+			<Item Name="size">mySize</Item>
+			<Item Name="capacity">myCapacity</Item>
+			<ArrayItems>
+				<Size>mySize</Size>
+				<ValuePointer>myData</ValuePointer>
+			</ArrayItems>
+		</Expand>
+	</Type>
+
+	<Type Name="HD_HashMap&lt;*&gt;">
+		<DisplayString>{{size = {mySize}}}</DisplayString>
+		<Expand>
+			<Item Name="size">mySize</Item>
+			<Item Name="capacity">myCapacity</Item>
+			<Synthetic Name="controlBytes">
+				<Expand>
+					<ArrayItems>
+						<Size>myCapacity</Size>
+						<ValuePointer>myControlBytes</ValuePointer>
+					</ArrayItems>
+				</Expand>
+			</Synthetic>
+			<Synthetic Name="keyValuePairs">
+				<Expand>
+					<ArrayItems>
+						<Size>myCapacity</Size>
+						<ValuePointer>myKeyValuePairs</ValuePointer>
+					</ArrayItems>
+				</Expand>
+			</Synthetic>
+		</Expand>
+	</Type>
+	
+</AutoVisualizer>

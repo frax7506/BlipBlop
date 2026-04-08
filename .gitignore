@@ -5,6 +5,8 @@
 
 /Output
 
+/Lib
+
 *.vcxproj
 *.vcxproj.filters
 *.vcxproj.user
