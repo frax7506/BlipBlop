@@ -70,29 +70,32 @@ void HD_Logger::PrintLogEntry(const LogEntry& aLogEntry) const
 
 	switch (aLogEntry.myLogLevel)
 	{
-	case LogLevel_Invalid:
-		break;
 	case LogLevel_Log:
 	{
 		SetConsoleTextAttribute(myStdErrHandle, BACKGROUND_RED | BACKGROUND_GREEN | BACKGROUND_BLUE);
-		std::cerr << "[  ERROR  ]";
+		std::cerr << "[   LOG   ]";
 		SetConsoleTextAttribute(myStdErrHandle, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY);
+		break;
 	}
 	case LogLevel_Warning:
 	{
 		SetConsoleTextAttribute(myStdErrHandle, BACKGROUND_RED | BACKGROUND_GREEN);
 		std::cerr << "[ WARNING ]";
 		SetConsoleTextAttribute(myStdErrHandle, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_INTENSITY);
+		break;
 	}
 	case LogLevel_Error:
 	{
 		SetConsoleTextAttribute(myStdErrHandle, BACKGROUND_RED);
-		std::cerr << "[   LOG   ]";
+		std::cerr << "[  ERROR  ]";
 		SetConsoleTextAttribute(myStdErrHandle, FOREGROUND_RED | FOREGROUND_INTENSITY);
+		break;
 	}
+	case LogLevel_Invalid:
+		break;
 	}
 
-	std::cerr << aLogEntry.myLogMessage.GetBuffer() << '\n';
+	std::cerr << " " << aLogEntry.myLogMessage.GetBuffer() << '\n';
 	std::cerr.flush();
 
 	SetConsoleTextAttribute(myStdErrHandle, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);

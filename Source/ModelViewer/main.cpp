@@ -7,7 +7,7 @@ LRESULT CALLBACK WinProc(_In_ HWND hWnd, _In_ UINT uMsg, _In_ WPARAM wParam, _In
 
 int GuardedMain()
 {
-#ifdef _DEBUG
+#if !IS_RETAIL_BUILD
 	// Request a console window.
 	AllocConsole();
 
@@ -26,7 +26,7 @@ int GuardedMain()
 	MoveWindow(consoleWindow, consoleSize.left, consoleSize.top, 1280, 720, true);
 
 	SetConsoleOutputCP(CP_UTF8);
-#endif
+#endif // !IS_RETAIL_BUILD
 
 	LOG_MESSAGE("ModelViewer starting...");
 
