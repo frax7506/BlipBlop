@@ -20,8 +20,10 @@ public:
 	~HD_GrowingArray();
 
 	void PushBack(const T& aItem);
-	void PushBackSorted(const T& aItem);
-	void PushBackSortedReverse(const T& aItem);
+	void PushBack(T&& aItem);
+	void InsertSorted(const T& aItem);
+	void InsertSortedReverse(const T& aItem);
+
 	void Remove(int aIndex);
 	void RemoveCyclic(int aIndex);
 	void RemoveAll();
@@ -34,6 +36,8 @@ public:
 
 	void Reserve(int aCapacity);
 	void Resize(int aSize);
+
+	void Swap(HD_GrowingArray& aOther);
 
 	T& operator[](int aIndex);
 	const T& operator[](int aIndex) const;
@@ -114,7 +118,16 @@ void HD_GrowingArray<T>::PushBack(const T& aItem)
 }
 
 template<typename T>
-void HD_GrowingArray<T>::PushBackSorted(const T& aItem)
+void HD_GrowingArray<T>::PushBack(T&& aItem)
+{
+	CheckSizeAndGrowIfNecessary();
+
+	myData[mySize] = HD_Move(aItem);
+	mySize++;
+}
+
+template<typename T>
+void HD_GrowingArray<T>::InsertSorted(const T& aItem)
 {
 	if (GetIsEmpty())
 	{
@@ -131,7 +144,7 @@ void HD_GrowingArray<T>::PushBackSorted(const T& aItem)
 }
 
 template<typename T>
-void HD_GrowingArray<T>::PushBackSortedReverse(const T& aItem)
+void HD_GrowingArray<T>::InsertSortedReverse(const T& aItem)
 {
 	if (GetIsEmpty())
 	{
@@ -173,10 +186,6 @@ template<typename T>
 void HD_GrowingArray<T>::RemoveAll()
 {
 	mySize = 0;
-	myCapacity = 2;
-
-	HD_SafeDeleteArray(myData);
-	myData = new T[myCapacity];
 }
 
 template<typename T>
@@ -210,10 +219,6 @@ void HD_GrowingArray<T>::DeleteAll()
 		HD_SafeDelete(myData[i]);
 
 	mySize = 0;
-	myCapacity = 2;
-
-	HD_SafeDeleteArray(myData);
-	myData = new T[myCapacity];
 }
 
 template<typename T>
@@ -250,6 +255,22 @@ void HD_GrowingArray<T>::Resize(int aSize)
 
 	for (int i = 0; i < mySize; i++)
 		myData[i] = T();
+}
+
+template<typename T>
+void HD_GrowingArray<T>::Swap(HD_GrowingArray& aOther)
+{
+	T* tempData = myData;
+	int tempSize = mySize;
+	int tempCapacity = myCapacity;
+
+	myData = aOther.myData;
+	mySize = aOther.mySize;
+	myCapacity = aOther.myCapacity;
+
+	aOther.myData = tempData;
+	aOther.mySize = tempSize;
+	aOther.myCapacity = tempCapacity;
 }
 
 template<typename T>
@@ -376,4 +397,10 @@ void HD_GrowingArray<T>::InsertAtIndex(const T& aItem, int aIndex)
 	memcpy(myData + (aIndex + 1), myData + aIndex, sizeof(T) * (mySize - aIndex));
 	myData[aIndex] = aItem;
 	mySize++;
+}
+
+template<typename T>
+void HD_Swap(HD_GrowingArray<T>& aLhs, HD_GrowingArray<T>& aRhs)
+{
+	aLhs.Swap(aRhs);
 }

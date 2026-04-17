@@ -10,66 +10,74 @@ group("Utilities")
 	cppdialect("C++17")
 	
 	targetname("HD_CommonUtilities_$(Configuration)")
-	targetdir("../Output/HD_CommonUtilities")
+	targetdir("../Lib")
 	objdir("../Intermediate/HD_CommonUtilities")
-	location("../HD_CommonUtilities")
-	files({ "../HD_CommonUtilities/*.h", "../HD_CommonUtilities/*.cpp", "../HD_CommonUtilities/HD_CommonUtilities.natvis" })
+	location("../Source/HD_CommonUtilities")
+	files({ "../Source/HD_CommonUtilities/*.h", "../Source/HD_CommonUtilities/*.cpp", "../Source/HD_CommonUtilities.natvis" })
 	pchheader("stdafx.h")
-	pchsource("../HD_CommonUtilities/stdafx.cpp")
+	pchsource("../Source/HD_CommonUtilities/stdafx.cpp")
 		
 	warnings("Extra")
 	fatalwarnings({"All"})
 	defines("_CRT_SECURE_NO_WARNINGS")
 	
+	filter("configurations:Debug")
+		defines("_DEBUG")
+	
+	filter("configurations:Release")
+		defines("_RELEASE")
+	
+	filter("configurations:*")
+	
 	vpaths
 	{
 		["Containers"] =
 		{
-			"../HD_CommonUtilities/HD_ArrayIterator.h",
-			"../HD_CommonUtilities/HD_CircularArray.h",
-			"../HD_CommonUtilities/HD_DataBuffer.h",
-			"../HD_CommonUtilities/HD_GrowingArray.h",
-			"../HD_CommonUtilities/HD_HashMap.h",
-			"../HD_CommonUtilities/HD_Map.h",
-			"../HD_CommonUtilities/HD_Pair.h",
-			"../HD_CommonUtilities/HD_StaticArray.h",
-			"../HD_CommonUtilities/HD_StaticStack.h",
-			"../HD_CommonUtilities/HD_String.h",
-			"../HD_CommonUtilities/HD_String.cpp"
+			"../Source/HD_CommonUtilities/HD_ArrayIterator.h",
+			"../Source/HD_CommonUtilities/HD_CircularArray.h",
+			"../Source/HD_CommonUtilities/HD_DataBuffer.h",
+			"../Source/HD_CommonUtilities/HD_GrowingArray.h",
+			"../Source/HD_CommonUtilities/HD_HashMap.h",
+			"../Source/HD_CommonUtilities/HD_Map.h",
+			"../Source/HD_CommonUtilities/HD_Pair.h",
+			"../Source/HD_CommonUtilities/HD_StaticArray.h",
+			"../Source/HD_CommonUtilities/HD_StaticStack.h",
+			"../Source/HD_CommonUtilities/HD_String.h",
+			"../Source/HD_CommonUtilities/HD_String.cpp"
 		},
 		["Math"] =
 		{
-			"../HD_CommonUtilities/HD_AABB_2D.h",
-			"../HD_CommonUtilities/HD_Math.h",
-			"../HD_CommonUtilities/HD_Vector2.h",
-			"../HD_CommonUtilities/HD_Vector3.h"
+			"../Source/HD_CommonUtilities/HD_AABB_2D.h",
+			"../Source/HD_CommonUtilities/HD_Math.h",
+			"../Source/HD_CommonUtilities/HD_Vector2.h",
+			"../Source/HD_CommonUtilities/HD_Vector3.h"
 		},
 		["Misc"] =
 		{
-			"../HD_CommonUtilities/HD_ExeArgs.h",
-			"../HD_CommonUtilities/HD_ExeArgs.cpp",
-			"../HD_CommonUtilities/HD_Hash.h",
-			"../HD_CommonUtilities/HD_IsFundamental.h",
-			"../HD_CommonUtilities/HD_Logger.h",
-			"../HD_CommonUtilities/HD_Logger.cpp",
-			"../HD_CommonUtilities/HD_PreprocessorMacros.h",
-			"../HD_CommonUtilities/HD_Random.h",
-			"../HD_CommonUtilities/HD_Random.cpp",
-			"../HD_CommonUtilities/HD_Singleton.h",
-			"../HD_CommonUtilities/HD_Time.h",
-			"../HD_CommonUtilities/HD_Time.cpp",
-			"../HD_CommonUtilities/HD_Types.h",
-			"../HD_CommonUtilities/HD_Utilities.h",
-			"../HD_CommonUtilities/OptimizedWindowsInclude.h"
+			"../Source/HD_CommonUtilities/HD_ExeArgs.h",
+			"../Source/HD_CommonUtilities/HD_ExeArgs.cpp",
+			"../Source/HD_CommonUtilities/HD_Hash.h",
+			"../Source/HD_CommonUtilities/HD_IsFundamental.h",
+			"../Source/HD_CommonUtilities/HD_Logger.h",
+			"../Source/HD_CommonUtilities/HD_Logger.cpp",
+			"../Source/HD_CommonUtilities/HD_PreprocessorMacros.h",
+			"../Source/HD_CommonUtilities/HD_Random.h",
+			"../Source/HD_CommonUtilities/HD_Random.cpp",
+			"../Source/HD_CommonUtilities/HD_Singleton.h",
+			"../Source/HD_CommonUtilities/HD_Time.h",
+			"../Source/HD_CommonUtilities/HD_Time.cpp",
+			"../Source/HD_CommonUtilities/HD_Types.h",
+			"../Source/HD_CommonUtilities/HD_Utilities.h",
+			"../Source/HD_CommonUtilities/OptimizedWindowsInclude.h"
 		},
 		["Natvis"] =
 		{
-			"../HD_CommonUtilities/HD_CommonUtilities.natvis"
+			"../Source/HD_CommonUtilities/HD_CommonUtilities.natvis"
 		},
 		["Profiling"] =
 		{
-			"../HD_CommonUtilities/HD_ScopedTimer.h",
-			"../HD_CommonUtilities/HD_ScopedTimer.cpp"
+			"../Source/HD_CommonUtilities/HD_ScopedTimer.h",
+			"../Source/HD_CommonUtilities/HD_ScopedTimer.cpp"
 		}
 	}
 group("")
@@ -81,24 +89,32 @@ language("C++")
 cppdialect("C++17")
 	
 targetname("BlipBlop_$(Configuration)")
-targetdir("../Lib/BlipBlop")
+targetdir("../Lib")
 objdir("../Intermediate/BlipBlop")
 location("../Source/BlipBlop")
 files({ "../Source/BlipBlop/*.h", "../Source/BlipBlop/*.cpp" })
 pchheader("stdafx.h")
 pchsource("../Source/BlipBlop/stdafx.cpp")
 	
-libdirs("../Lib/HD_CommonUtilities")
+libdirs("../Lib")
 links("HD_CommonUtilities_$(Configuration)")
-includedirs("../Source")
+includedirs("../Source/HD_CommonUtilities")
 		
 warnings("Extra")
 fatalwarnings({"All"})
 defines("_CRT_SECURE_NO_WARNINGS")
+
+filter("configurations:Debug")
+	defines("_DEBUG")
+	
+filter("configurations:Release")
+	defines("_RELEASE")
+	
+filter("configurations:*")
 	
 project("ModelViewer")
 dependson({ "HD_CommonUtilities", "BlipBlop" })
-kind("ConsoleApp")
+kind("WindowedApp")
 language("C++")
 cppdialect("C++17")
 	
@@ -110,10 +126,18 @@ files({ "../Source/ModelViewer/*.h", "../Source/ModelViewer/*.cpp" })
 pchheader("stdafx.h")
 pchsource("../Source/ModelViewer/stdafx.cpp")
 	
-libdirs({ "../Lib/HD_CommonUtilities", "../Lib/BlipBlop" })
+libdirs("../Lib")
 links({ "HD_CommonUtilities_$(Configuration)", "BlipBlop_$(Configuration)" })
 includedirs({ "../Source/HD_CommonUtilities", "../Source/BlipBlop" })
 	
 warnings("Extra")
 fatalwarnings({"All"})
 defines("_CRT_SECURE_NO_WARNINGS")
+
+filter("configurations:Debug")
+	defines("_DEBUG")
+	
+filter("configurations:Release")
+	defines("_RELEASE")
+	
+filter("configurations:*")

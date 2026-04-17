@@ -20,7 +20,12 @@ void HD_ExeArgs::Init(int argc, char* argv[])
 		else
 		{
 			HD_String& argValue = myExeArgToValueMap[lastExeArgName];
-			argValue.Append(" ");
+
+			if (argValue.GetLength() > 0)
+			{
+				argValue.Append(" ");
+			}
+
 			argValue.Append(argv[i]);
 		}
 	}

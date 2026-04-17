@@ -23,6 +23,9 @@ public:
 		LogLevel_Error,
 	};
 
+	HD_Logger();
+	~HD_Logger();
+
 	void Log(const char* aLogMessage, LogLevel aLogLevel);
 
 private:
@@ -39,9 +42,6 @@ private:
 		HD_String myLogMessage;
 		LogLevel myLogLevel;
 	};
-
-	HD_Logger();
-	~HD_Logger();
 
 	void LogThread();
 

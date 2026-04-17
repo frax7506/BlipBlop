@@ -42,8 +42,6 @@
 #define NOMCX
 #include <Windows.h>
 
-#include "BlipBlop/GraphicsEngine.h"
-
 class ModelViewer
 {
 public:

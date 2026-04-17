@@ -25,7 +25,7 @@ private:
 };
 
 template<>
-int HD_ExeArgs::GetValue(const char* aExeArgName) const
+inline int HD_ExeArgs::GetValue(const char* aExeArgName) const
 {
 	const HD_String* value = myExeArgToValueMap.GetIfExists(aExeArgName);
 	if (!value)
@@ -37,7 +37,7 @@ int HD_ExeArgs::GetValue(const char* aExeArgName) const
 }
 
 template<>
-float HD_ExeArgs::GetValue(const char* aExeArgName) const
+inline float HD_ExeArgs::GetValue(const char* aExeArgName) const
 {
 	const HD_String* value = myExeArgToValueMap.GetIfExists(aExeArgName);
 	if (!value)
@@ -49,7 +49,7 @@ float HD_ExeArgs::GetValue(const char* aExeArgName) const
 }
 
 template<>
-bool HD_ExeArgs::GetValue(const char* aExeArgName) const
+inline bool HD_ExeArgs::GetValue(const char* aExeArgName) const
 {
 	const HD_String* value = myExeArgToValueMap.GetIfExists(aExeArgName);
 	if (!value)
@@ -62,7 +62,7 @@ bool HD_ExeArgs::GetValue(const char* aExeArgName) const
 }
 
 template<>
-HD_Vector2f HD_ExeArgs::GetValue(const char* aExeArgName) const
+inline HD_Vector2f HD_ExeArgs::GetValue(const char* aExeArgName) const
 {
 	const HD_String* value = myExeArgToValueMap.GetIfExists(aExeArgName);
 	if (!value)
@@ -75,7 +75,7 @@ HD_Vector2f HD_ExeArgs::GetValue(const char* aExeArgName) const
 }
 
 template<>
-HD_Vector3f HD_ExeArgs::GetValue(const char* aExeArgName) const
+inline HD_Vector3f HD_ExeArgs::GetValue(const char* aExeArgName) const
 {
 	const HD_String* value = myExeArgToValueMap.GetIfExists(aExeArgName);
 	if (!value)
@@ -89,7 +89,7 @@ HD_Vector3f HD_ExeArgs::GetValue(const char* aExeArgName) const
 }
 
 template<>
-HD_String HD_ExeArgs::GetValue(const char* aExeArgName) const
+inline HD_String HD_ExeArgs::GetValue(const char* aExeArgName) const
 {
 	const HD_String* value = myExeArgToValueMap.GetIfExists(aExeArgName);
 	if (!value)

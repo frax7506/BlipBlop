@@ -2,12 +2,7 @@
 #include "ModelViewer.h"
 
 #include "Application.h"
-
-#include <algorithm>
-#include <filesystem>
-#include <future>
-#include <iostream>
-#include <vector>
+#include "GraphicsEngine.h"
 
 ModelViewer::ModelViewer()
 	: myIsRunning(false)
@@ -49,13 +44,13 @@ bool ModelViewer::Initialize(SIZE aWindowSize, WNDPROC aWindowProcess, LPCWSTR a
 
 	{
 		// Graphics Init
-		MVLOG(Log, "Initializing Graphics Engine...");
+		LOG_MESSAGE("Initializing Graphics Engine...");
 
 		if (!GraphicsEngine::Get().Initialize(myMainWindowHandle))
-		return false;
+			return false;
 	}
 
-	MVLOG(Log, "Ready!");
+	LOG_MESSAGE("ModelViewer ready!");
 
 	// Show our program window and give it focus.
 	ShowWindow(myMainWindowHandle, SW_SHOW);

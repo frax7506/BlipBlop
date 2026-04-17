@@ -2,10 +2,10 @@
 #include "HD_String.h"
 
 HD_String::HD_String()
-	: myData(nullptr)
-	, myLength(0)
-	, myCapacity(0)
+	: myLength(0)
+	, myCapacity(1)
 {
+	myData = new char[myCapacity] { 0 };
 }
 
 HD_String::HD_String(const char* aString)

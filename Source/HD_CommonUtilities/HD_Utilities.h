@@ -8,3 +8,5 @@
 
 #define HD_Strlen(a) static_cast<int>(strlen(a))
 #define HD_Strcmp(a, b) strcmp(a, b)
+
+#define HD_Unused(a) a;

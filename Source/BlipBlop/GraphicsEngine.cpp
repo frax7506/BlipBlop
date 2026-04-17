@@ -15,6 +15,7 @@ GraphicsEngine& GraphicsEngine::Get()
 
 bool GraphicsEngine::Initialize(HWND aWindowHandle)
 {
+	HD_Unused(aWindowHandle);
 	return true;
 }
 
