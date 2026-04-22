@@ -10,3 +10,5 @@
 *.vcxproj
 *.vcxproj.filters
 *.vcxproj.user
+
+copy_hd_common_utilities.bat
