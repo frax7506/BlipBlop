@@ -21,9 +21,19 @@ HD_Logger::~HD_Logger()
 
 void HD_Logger::Log(const char* aLogMessage, LogLevel aLogLevel)
 {
-	LogEntry logEntry;
-	logEntry.myLogMessage = aLogMessage;
-	logEntry.myLogLevel = aLogLevel;
+	LogEntry logEntry(aLogMessage, aLogLevel);
+
+	{
+		std::scoped_lock lock(myLogEntriesMutex);
+		myLogEntryQueue.PushBack(HD_Move(logEntry));
+	}
+
+	myLogEntriesConditionVariable.notify_one();
+}
+
+void HD_Logger::Log(const wchar_t* aLogMessage, LogLevel aLogLevel)
+{
+	LogEntry logEntry(aLogMessage, aLogLevel);
 
 	{
 		std::scoped_lock lock(myLogEntriesMutex);
@@ -95,7 +105,15 @@ void HD_Logger::PrintLogEntry(const LogEntry& aLogEntry) const
 		break;
 	}
 
-	std::cerr << " " << aLogEntry.myLogMessage.GetBuffer() << '\n';
+	if (aLogEntry.myLogMessage.GetIsWide())
+	{
+		std::wcerr << L" " << aLogEntry.myLogMessage.GetWBuffer() << '\n';
+	}
+	else
+	{
+		std::cerr << " " << aLogEntry.myLogMessage.GetBuffer() << '\n';
+	}
+
 	std::cerr.flush();
 
 	SetConsoleTextAttribute(myStdErrHandle, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);

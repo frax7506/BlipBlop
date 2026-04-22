@@ -1,8 +1,8 @@
 #pragma once
 
 #include "HD_GrowingArray.h"
+#include "HD_HybridString.h"
 #include "HD_Singleton.h"
-#include "HD_String.h"
 
 #include <condition_variable>
 #include <mutex>
@@ -27,10 +27,28 @@ public:
 	~HD_Logger();
 
 	void Log(const char* aLogMessage, LogLevel aLogLevel);
+	void Log(const wchar_t* aLogMessage, LogLevel aLogLevel);
 
 private:
 	struct LogEntry
 	{
+		LogEntry()
+			: myLogLevel(LogLevel_Invalid)
+		{
+		}
+
+		LogEntry(const char* aLogMessage, LogLevel aLogLevel)
+			: myLogMessage(aLogMessage)
+			, myLogLevel(aLogLevel)
+		{
+		}
+
+		LogEntry(const wchar_t* aLogMessage, LogLevel aLogLevel)
+			: myLogMessage(aLogMessage)
+			, myLogLevel(aLogLevel)
+		{
+		}
+
 		LogEntry& operator=(LogEntry&& aLogEntry)
 		{
 			myLogMessage = HD_Move(aLogEntry.myLogMessage);
@@ -39,7 +57,7 @@ private:
 			return *this;
 		}
 
-		HD_String myLogMessage;
+		HD_HybridString myLogMessage;
 		LogLevel myLogLevel;
 	};
 
