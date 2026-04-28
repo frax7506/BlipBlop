@@ -3,6 +3,8 @@
 #include "HD_String.h"
 
 #include <cstdarg>
+#include <stdarg.h>
+#include <stdio.h>
 
 #define HD_FORMAT_MAX_BUFFER_SIZE 512
 
