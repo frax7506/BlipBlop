@@ -1,6 +1,7 @@
 #pragma once
 
-typedef struct HWND__* HWND;
+#include "RenderHardwareInterface.h"
+#include "Texture.h"
 
 class GraphicsEngine
 {
@@ -13,4 +14,7 @@ public:
 private:
 	GraphicsEngine();
 	~GraphicsEngine();
+
+	RenderHardwareInterface myRHI;
+	Texture myBackBuffer;
 };

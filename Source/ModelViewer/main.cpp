@@ -55,9 +55,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	catch (const std::exception& aException)
 	{
 		HD_String message = aException.what();
-		HD_Unused(message);
-
-		LOG_ERROR("Exception caught!"); // htodo: fix formatted input to the logger
+		LOG_ERROR_F("Exception caught: %s\n", message.GetBuffer());
 		return -1;
 	}
 }

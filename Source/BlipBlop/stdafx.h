@@ -2,6 +2,7 @@
 
 #include "HD_Logger.h"
 #include "HD_PreprocessorMacros.h"
+#include "HD_StringUtils.h"
 #include "HD_Types.h"
 #include "HD_Utilities.h"
 

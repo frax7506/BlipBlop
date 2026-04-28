@@ -82,6 +82,7 @@ int ModelViewer::Run()
 		}
 
 		// TODO: Frame Update and Rendering goes here
+		GraphicsEngine::Get().Render();
 	}
 
 	return 0;

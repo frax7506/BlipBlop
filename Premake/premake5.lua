@@ -95,7 +95,7 @@ project("BlipBlop")
 	pchsource("../Source/BlipBlop/stdafx.cpp")
 	
 	libdirs("../Lib")
-	links("HD_CommonUtilities_$(Configuration)")
+	links({ "HD_CommonUtilities_$(Configuration)", "d3d11", "DXGI", "dxguid" })
 	includedirs("../Source/HD_CommonUtilities")
 		
 	warnings("Extra")
@@ -106,6 +106,23 @@ project("BlipBlop")
 		defines("_RETAIL")
 	
 	filter({})
+	
+	vpaths
+	{
+		["Objects"] =
+		{
+			"../Source/BlipBlop/Texture.h",
+			"../Source/BlipBlop/Texture.cpp",
+		},
+		["RHI"] =
+		{
+			"../Source/BlipBlop/RenderHardwareInterface.h",
+			"../Source/BlipBlop/RenderHardwareInterface.cpp",
+		},
+		["Shaders"] =
+		{
+		}
+	}
 	
 project("ModelViewer")
 	dependson({ "HD_CommonUtilities", "BlipBlop" })

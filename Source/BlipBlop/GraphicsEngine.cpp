@@ -15,13 +15,13 @@ GraphicsEngine& GraphicsEngine::Get()
 
 bool GraphicsEngine::Initialize(HWND aWindowHandle)
 {
-	HD_Unused(aWindowHandle);
-	return true;
+	return myRHI.Init(aWindowHandle, true, myBackBuffer);
 }
 
 void GraphicsEngine::Render()
 {
-
+	myRHI.ClearRenderTarger(myBackBuffer);
+	myRHI.Present();
 }
 
 GraphicsEngine::GraphicsEngine()
