@@ -35,14 +35,11 @@ group("Utilities")
 				"../Source/HD_CommonUtilities/HD_DataBuffer.h",
 				"../Source/HD_CommonUtilities/HD_GrowingArray.h",
 				"../Source/HD_CommonUtilities/HD_HashMap.h",
-				"../Source/HD_CommonUtilities/HD_HybridString.h",
-				"../Source/HD_CommonUtilities/HD_HybridString.cpp",
 				"../Source/HD_CommonUtilities/HD_Map.h",
 				"../Source/HD_CommonUtilities/HD_Pair.h",
 				"../Source/HD_CommonUtilities/HD_StaticArray.h",
 				"../Source/HD_CommonUtilities/HD_StaticStack.h",
-				"../Source/HD_CommonUtilities/HD_String.h",
-				"../Source/HD_CommonUtilities/HD_String.cpp"
+				"../Source/HD_CommonUtilities/HD_String.h"
 			},
 			["Math"] =
 			{
@@ -55,6 +52,7 @@ group("Utilities")
 			{
 				"../Source/HD_CommonUtilities/HD_ExeArgs.h",
 				"../Source/HD_CommonUtilities/HD_ExeArgs.cpp",
+				"../Source/HD_CommonUtilities/HD_Format.h",
 				"../Source/HD_CommonUtilities/HD_Hash.h",
 				"../Source/HD_CommonUtilities/HD_IsFundamental.h",
 				"../Source/HD_CommonUtilities/HD_Logger.h",

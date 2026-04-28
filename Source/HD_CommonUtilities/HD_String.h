@@ -10,12 +10,15 @@ class HD_Str
 {
 public:
 	HD_Str();
+	HD_Str(int aInitialCapacity);
 	HD_Str(const T* aString);
 	HD_Str(const HD_Str& aString);
 	HD_Str(HD_Str&& aString);
 	~HD_Str();
 
 	const T* GetBuffer() const;
+	T* GetWritableBuffer();
+
 	int GetLength() const;
 	T GetCharAt(int aIndex) const;
 
@@ -58,6 +61,14 @@ HD_Str<T>::HD_Str()
 }
 
 template<typename T>
+HD_Str<T>::HD_Str(int aInitialCapacity)
+	: myLength(0)
+	, myCapacity(aInitialCapacity)
+{
+	myData = new T[myCapacity]{ 0 };
+}
+
+template<typename T>
 HD_Str<T>::HD_Str(const T* aString)
 {
 	myLength = HD_Strlen(aString);
@@ -89,6 +100,12 @@ HD_Str<T>::~HD_Str()
 
 template<typename T>
 const T* HD_Str<T>::GetBuffer() const
+{
+	return myData;
+}
+
+template<typename T>
+T* HD_Str<T>::GetWritableBuffer()
 {
 	return myData;
 }
@@ -166,6 +183,8 @@ HD_Str<T>& HD_Str<T>::operator=(const HD_Str& aString)
 template<typename T>
 HD_Str<T>& HD_Str<T>::operator=(HD_Str&& aString)
 {
+	HD_SafeDeleteArray(myData);
+
 	myLength = aString.myLength;
 	myCapacity = aString.myCapacity;
 	myData = aString.myData;

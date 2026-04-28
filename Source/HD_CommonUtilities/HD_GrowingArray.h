@@ -308,6 +308,8 @@ HD_GrowingArray<T>& HD_GrowingArray<T>::operator=(const HD_GrowingArray& aGrowin
 template<typename T>
 HD_GrowingArray<T>& HD_GrowingArray<T>::operator=(HD_GrowingArray&& aGrowingArray)
 {
+	HD_SafeDeleteArray(myData);
+
 	myData = aGrowingArray.myData;
 	aGrowingArray.myData = nullptr;
 	mySize = aGrowingArray.mySize;

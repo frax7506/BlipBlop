@@ -436,6 +436,8 @@ HD_Map<K, V>& HD_Map<K, V>::operator=(const HD_Map& aMap)
 template<typename K, typename V>
 HD_Map<K, V>& HD_Map<K, V>::operator=(HD_Map&& aMap)
 {
+	Cleanup(myRoot);
+
 	myRoot = aMap.myRoot;
 	aMap.myRoot = nullptr;
 
