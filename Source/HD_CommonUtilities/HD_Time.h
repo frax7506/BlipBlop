@@ -1,7 +1,9 @@
 #pragma once
 
+typedef unsigned long long Time_t;
+
 namespace HD_Time
 {
-	unsigned long long GetCurrentTimeMS();
-	unsigned long long GetCurrentTimeMicroseconds();
+	Time_t GetCurrentTimeMS();
+	Time_t GetCurrentTimeMicroseconds();
 }

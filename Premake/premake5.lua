@@ -50,6 +50,7 @@ group("Utilities")
 			},
 			["Misc"] =
 			{
+				"../Source/HD_CommonUtilities/HD_Bitset.h",
 				"../Source/HD_CommonUtilities/HD_ExeArgs.h",
 				"../Source/HD_CommonUtilities/HD_ExeArgs.cpp",
 				"../Source/HD_CommonUtilities/HD_Format.h",

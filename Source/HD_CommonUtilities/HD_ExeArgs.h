@@ -13,91 +13,19 @@
 class HD_ExeArgs : public HD_Singleton<HD_ExeArgs>
 {
 public:
-	void Init(int argc, char* argv[]);
+	void Init(int argc, const char* argv[]);
 
 	bool IsPresent(const char* aExeArgName) const;
 
-	template<typename T>
-	T GetValue(const char* aExeArgName) const;
+	int GetValueInt(const char* aExeArgIntName) const;
+	float GetValueFloat(const char* aExeArgFloatName) const;
+	bool GetValueBool(const char* aExeArgBoolName) const;
+	HD_Vector2f GetValueVector2f(const char* aExeArgVector2fName) const;
+	HD_Vector3f GetValueVector3f(const char* aExeArgVector3fName) const;
+	HD_String GetValueString(const char* aExeArgStringName) const;
 
 private:
 	HD_HashMap<HD_String, HD_String> myExeArgToValueMap;
 };
-
-template<>
-inline int HD_ExeArgs::GetValue(const char* aExeArgName) const
-{
-	const HD_String* value = myExeArgToValueMap.GetIfExists(aExeArgName);
-	if (!value)
-		return 0;
-
-	int result = 0;
-	sscanf(value->GetBuffer(), "%i", &result);
-	return result;
-}
-
-template<>
-inline float HD_ExeArgs::GetValue(const char* aExeArgName) const
-{
-	const HD_String* value = myExeArgToValueMap.GetIfExists(aExeArgName);
-	if (!value)
-		return 0.f;
-
-	float result = 0.f;
-	sscanf(value->GetBuffer(), "%f", &result);
-	return result;
-}
-
-template<>
-inline bool HD_ExeArgs::GetValue(const char* aExeArgName) const
-{
-	const HD_String* value = myExeArgToValueMap.GetIfExists(aExeArgName);
-	if (!value)
-		return false;
-
-	// A bool as an exe arg is given as 0 or 1
-	int result = 0;
-	sscanf(value->GetBuffer(), "%i", &result);
-	return result;
-}
-
-template<>
-inline HD_Vector2f HD_ExeArgs::GetValue(const char* aExeArgName) const
-{
-	const HD_String* value = myExeArgToValueMap.GetIfExists(aExeArgName);
-	if (!value)
-		return HD_Vector2f(0.f, 0.f);
-
-	float x = 0.f;
-	float y = 0.f;
-	sscanf(value->GetBuffer(), "%f %f", &x, &y);
-	return HD_Vector2f(x, y);
-}
-
-template<>
-inline HD_Vector3f HD_ExeArgs::GetValue(const char* aExeArgName) const
-{
-	const HD_String* value = myExeArgToValueMap.GetIfExists(aExeArgName);
-	if (!value)
-		return HD_Vector3f(0.f, 0.f, 0.f);
-
-	float x = 0.f;
-	float y = 0.f;
-	float z = 0.f;
-	sscanf(value->GetBuffer(), "%f %f %f", &x, &y, &z);
-	return HD_Vector3f(x, y, z);
-}
-
-template<>
-inline HD_String HD_ExeArgs::GetValue(const char* aExeArgName) const
-{
-	const HD_String* value = myExeArgToValueMap.GetIfExists(aExeArgName);
-	if (!value)
-		return "";
-
-	char buffer[64]{ 0 };
-	sscanf(value->GetBuffer(), "%s", buffer);
-	return HD_String(buffer);
-}
 
 #endif // !IS_RETAIL_BUILD

@@ -11,7 +11,6 @@ class HD_Str
 {
 public:
 	HD_Str();
-	HD_Str(int aInitialCapacity);
 	HD_Str(const T* aString);
 	HD_Str(const HD_Str& aString);
 	HD_Str(HD_Str&& aString);
@@ -59,14 +58,6 @@ HD_Str<T>::HD_Str()
 	, myCapacity(1)
 {
 	myData = new T[myCapacity] { 0 };
-}
-
-template<typename T>
-HD_Str<T>::HD_Str(int aInitialCapacity)
-	: myLength(0)
-	, myCapacity(aInitialCapacity)
-{
-	myData = new T[myCapacity]{ 0 };
 }
 
 template<typename T>

@@ -1,18 +1,13 @@
 #pragma once
 
 #include <cassert>
+#include <cstring>
 
 // HD_CircularArray
 // * If overflow is enabled and PushBack is called on a full array it will start
 //   to overwrite the oldest items.
 // * The GetFirstAndRemove function gets the oldest item and removes it, which means
 //   that PushBack and GetFirstAndRemove can be used to make this array a FIFO queue.
-
-enum class OverflowBehaviour
-{
-	Enable,
-	Disable,
-};
 
 template<typename T, int aCapacity>
 class HD_CircularArray
@@ -29,17 +24,24 @@ public:
 	int GetCapacity() const;
 	bool IsEmpty() const;
 
-	void SetOverflowBehaviour(OverflowBehaviour aOverflowBehaviour);
+	void EnableOverflow();
+	void DisableOverflow();
 
 	T& operator[](int aIndex);
 	const T& operator[](int aIndex) const;
 
 private:
+	enum eOverflowBehaviour : char
+	{
+		eOverflowBehaviour_Enable,
+		eOverflowBehaviour_Disable,
+	};
+
 	int myFirstIndex;
 	int myWriteIndex;
 	int mySize;
 
-	OverflowBehaviour myOverflowBehaviour;
+	eOverflowBehaviour myOverflowBehaviour;
 	T myData[aCapacity];
 };
 
@@ -49,14 +51,14 @@ HD_CircularArray<T, aCapacity>::HD_CircularArray()
 	, myWriteIndex(0)
 	, mySize(0)
 {
-	myOverflowBehaviour = OverflowBehaviour::Enable;
+	myOverflowBehaviour = eOverflowBehaviour_Enable;
 	memset(myData, 0, sizeof(T) * aCapacity);
 }
 
 template<typename T, int aCapacity>
 void HD_CircularArray<T, aCapacity>::PushBack(const T& aItem)
 {
-	assert(myOverflowBehaviour != OverflowBehaviour::Disable || mySize + 1 <= aCapacity);
+	assert(myOverflowBehaviour != eOverflowBehaviour_Disable || mySize + 1 <= aCapacity);
 
 	memcpy(myData + myWriteIndex, &aItem, sizeof(T));
 
@@ -109,9 +111,15 @@ bool HD_CircularArray<T, aCapacity>::IsEmpty() const
 }
 
 template<typename T, int aCapacity>
-void HD_CircularArray<T, aCapacity>::SetOverflowBehaviour(OverflowBehaviour aOverflowBehaviour)
+void HD_CircularArray<T, aCapacity>::EnableOverflow()
 {
-	myOverflowBehaviour = aOverflowBehaviour;
+	myOverflowBehaviour = eOverflowBehaviour_Enable;
+}
+
+template<typename T, int aCapacity>
+void HD_CircularArray<T, aCapacity>::DisableOverflow()
+{
+	myOverflowBehaviour = eOverflowBehaviour_Disable;
 }
 
 template<typename T, int aCapacity>
