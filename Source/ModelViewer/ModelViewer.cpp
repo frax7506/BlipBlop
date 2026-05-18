@@ -10,7 +10,7 @@ ModelViewer::ModelViewer()
 {
 }
 
-bool ModelViewer::Initialize(SIZE aWindowSize, WNDPROC aWindowProcess, LPCWSTR aWindowTitle)
+bool ModelViewer::Init(SIZE aWindowSize, WNDPROC aWindowProcess, LPCWSTR aWindowTitle)
 {
 	constexpr LPCWSTR windowClassName = L"ModelViewerMainWindow";
 
@@ -31,22 +31,22 @@ bool ModelViewer::Initialize(SIZE aWindowSize, WNDPROC aWindowProcess, LPCWSTR a
 
 	// Then we use the class to create our window
 	myMainWindowHandle = CreateWindow(
-	windowClassName,// Classname
-	aWindowTitle,   // Window Title
-	WS_OVERLAPPEDWINDOW | WS_POPUP, // Flags
-	posX,
-	posY,
-	aWindowSize.cx,
-	aWindowSize.cy,
-	nullptr, nullptr, nullptr,
-	nullptr
-);
+		windowClassName, // Classname
+		aWindowTitle, // Window Title
+		WS_OVERLAPPEDWINDOW | WS_POPUP, // Flags
+		posX,
+		posY,
+		aWindowSize.cx,
+		aWindowSize.cy,
+		nullptr, nullptr, nullptr,
+		nullptr
+	);
 
 	{
 		// Graphics Init
 		LOG_MESSAGE("Initializing Graphics Engine...");
 
-		if (!GraphicsEngine::Get().Initialize(myMainWindowHandle))
+		if (!GraphicsEngine::Get().Init(myMainWindowHandle))
 			return false;
 	}
 

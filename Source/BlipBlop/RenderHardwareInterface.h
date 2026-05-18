@@ -18,7 +18,7 @@ public:
 	bool Init(HWND aWindowHandle, bool aEnableDebug, Texture& outBackBuffer);
 
 	void Present() const;
-	void ClearRenderTarger(const Texture& aTarget) const;
+	void ClearRenderTarget(const Texture& aTarget) const;
 
 private:
 	void SetObjectName(const Microsoft::WRL::ComPtr<ID3D11DeviceChild>& aObject, const char* aName) const;

@@ -8,7 +8,7 @@ class GraphicsEngine
 public:
 	static GraphicsEngine& Get();
 
-	bool Initialize(HWND aWindowHandle);
+	bool Init(HWND aWindowHandle);
 	void Render();
 
 private:

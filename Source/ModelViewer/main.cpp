@@ -31,11 +31,11 @@ int GuardedMain()
 	LOG_MESSAGE("ModelViewer starting...");
 
 	constexpr SIZE windowSize = { 1920, 1080 };
-	constexpr LPCWSTR windowTitle = L"AGP Modelviewer"; // L"" denotes "I want this to be a wide-string".
+	constexpr LPCWSTR windowTitle = L"AGP Modelviewer";
 
-	ModelViewer MV;
-	MV.Initialize(windowSize, WinProc, windowTitle);
-	return MV.Run();
+	ModelViewer modelViewer;
+	modelViewer.Init(windowSize, WinProc, windowTitle);
+	return modelViewer.Run();
 }
 
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance,

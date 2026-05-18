@@ -115,7 +115,7 @@ bool RenderHardwareInterface::Init(HWND aWindowHandle, bool aEnableDebug, Textur
 		return false;
 	}
 
-	SetObjectName(outBackBuffer.myRTV, "BackBuvver_RTV");
+	SetObjectName(outBackBuffer.myRTV, "BackBuffer_RTV");
 
 	LOG_MESSAGE("RHI started!");
 	return true;
@@ -126,7 +126,7 @@ void RenderHardwareInterface::Present() const
 	mySwapChain->Present(0, DXGI_PRESENT_ALLOW_TEARING);
 }
 
-void RenderHardwareInterface::ClearRenderTarger(const Texture& aTarget) const
+void RenderHardwareInterface::ClearRenderTarget(const Texture& aTarget) const
 {
 	f32 clearColor[4] = { 0, 1, 0, 0 };
 	myContext->ClearRenderTargetView(aTarget.myRTV.Get(), clearColor);

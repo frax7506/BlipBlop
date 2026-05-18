@@ -47,7 +47,7 @@ class ModelViewer
 public:
 	ModelViewer();
 
-	bool Initialize(SIZE aWindowSize, WNDPROC aWindowProcess, LPCWSTR aWindowTitle);
+	bool Init(SIZE aWindowSize, WNDPROC aWindowProcess, LPCWSTR aWindowTitle);
 	int Run();
 
 private:
