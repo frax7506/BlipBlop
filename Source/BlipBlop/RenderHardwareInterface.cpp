@@ -17,6 +17,7 @@ RenderHardwareInterface::~RenderHardwareInterface()
 
 bool RenderHardwareInterface::Init(HWND aWindowHandle, bool aEnableDebug, Texture& outBackBuffer)
 {
+	myWindowHandle = aWindowHandle;
 	HRESULT result = E_FAIL;
 
 	ComPtr<IDXGIFactory> dxFactory;
@@ -117,6 +118,10 @@ bool RenderHardwareInterface::Init(HWND aWindowHandle, bool aEnableDebug, Textur
 
 	SetObjectName(outBackBuffer.myRTV, "BackBuffer_RTV");
 
+	HD_Vector2ui clientSize = GetClientSize();
+	Viewport viewport = { 0, 0, static_cast<f32>(clientSize.myX), static_cast<f32>(clientSize.myY), 0, 1 };
+	outBackBuffer.myViewport = viewport;
+
 	LOG_MESSAGE("RHI started!");
 	return true;
 }
@@ -128,8 +133,33 @@ void RenderHardwareInterface::Present() const
 
 void RenderHardwareInterface::ClearRenderTarget(const Texture& aTarget) const
 {
-	f32 clearColor[4] = { 0, 1, 0, 0 };
+	f32 clearColor[4] = { 0, 0, 0, 0 };
 	myContext->ClearRenderTargetView(aTarget.myRTV.Get(), clearColor);
+}
+
+void RenderHardwareInterface::SetRenderTarget(const Texture* aTarget) const
+{
+	ID3D11RenderTargetView* renderTargetView = nullptr;
+	D3D11_VIEWPORT viewport = { 0, 0, 0, 0, 0, 1 };
+
+	if (aTarget)
+	{
+		renderTargetView = aTarget->myRTV.Get();
+		memcpy_s(&viewport, sizeof(D3D11_VIEWPORT), &aTarget->myViewport, sizeof(Viewport));
+	}
+
+	myContext->OMSetRenderTargets(1, &renderTargetView, nullptr);
+	myContext->RSSetViewports(1, &viewport);
+}
+
+HD_Vector2ui RenderHardwareInterface::GetClientSize() const
+{
+	RECT clientRect = {};
+	GetClientRect(myWindowHandle, &clientRect);
+	const u32 width = clientRect.right - clientRect.left;
+	const u32 height = clientRect.bottom - clientRect.top;
+
+	return { width, height };
 }
 
 void RenderHardwareInterface::SetObjectName(const Microsoft::WRL::ComPtr<ID3D11DeviceChild>& aObject, const char* aName) const

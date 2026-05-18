@@ -114,11 +114,13 @@ project("BlipBlop")
 		{
 			"../Source/BlipBlop/Texture.h",
 			"../Source/BlipBlop/Texture.cpp",
+			"../Source/BlipBlop/Vertex.h",
 		},
 		["RHI"] =
 		{
 			"../Source/BlipBlop/RenderHardwareInterface.h",
 			"../Source/BlipBlop/RenderHardwareInterface.cpp",
+			"../Source/BlipBlop/RHIStructs.h",
 		},
 		["Shaders"] =
 		{

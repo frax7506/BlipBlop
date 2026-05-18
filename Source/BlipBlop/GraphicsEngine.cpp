@@ -21,6 +21,7 @@ bool GraphicsEngine::Init(HWND aWindowHandle)
 void GraphicsEngine::Render()
 {
 	myRHI.ClearRenderTarget(myBackBuffer);
+	myRHI.SetRenderTarget(&myBackBuffer);
 	myRHI.Present();
 }
 

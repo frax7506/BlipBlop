@@ -195,6 +195,7 @@ HD_Vector2<T> operator*(T aConstant, const HD_Vector2<T>& aVector)
 
 typedef HD_Vector2<float> HD_Vector2f;
 typedef HD_Vector2<int> HD_Vector2i;
+typedef HD_Vector2<unsigned int> HD_Vector2ui;
 
 template <> const HD_Vector2<float> HD_Vector2<float>::Zero = { 0.f, 0.f };
 template <> const HD_Vector2<float> HD_Vector2<float>::Up = { 0.f, 1.f };
