@@ -1,3 +1,5 @@
+solutionDir = "../"
+
 workspace("BlipBlop")
 	configurations({ "Debug", "Release", "Retail" })
 	platforms("x64")
@@ -46,7 +48,8 @@ group("Utilities")
 				"../Source/HD_CommonUtilities/HD_AABB_2D.h",
 				"../Source/HD_CommonUtilities/HD_Math.h",
 				"../Source/HD_CommonUtilities/HD_Vector2.h",
-				"../Source/HD_CommonUtilities/HD_Vector3.h"
+				"../Source/HD_CommonUtilities/HD_Vector3.h",
+				"../Source/HD_CommonUtilities/HD_Vector4.h"
 			},
 			["Misc"] =
 			{
@@ -88,23 +91,34 @@ project("BlipBlop")
 	cppdialect("C++17")
 	
 	targetname("BlipBlop_$(Configuration)")
-	targetdir("../Lib")
-	objdir("../Intermediate/BlipBlop")
-	location("../Source/BlipBlop")
-	files({ "../Source/BlipBlop/*.h", "../Source/BlipBlop/*.cpp" })
+	targetdir("$(SolutionDir)Lib")
+	objdir("$(SolutionDir)Intermediate/BlipBlop")
+	location(solutionDir .. "Source/BlipBlop")
+	files({ solutionDir .. "Source/BlipBlop/*.h", solutionDir .. "Source/BlipBlop/*.cpp", solutionDir .. "Source/BlipBlop/*.hlsli", solutionDir .. "Source/BlipBlop/*.hlsl", solutionDir .. "Source/BlipBlop/*.natvis" })
 	pchheader("stdafx.h")
-	pchsource("../Source/BlipBlop/stdafx.cpp")
+	pchsource(solutionDir .. "Source/BlipBlop/stdafx.cpp")
 	
-	libdirs("../Lib")
+	libdirs("$(SolutionDir)Lib")
 	links({ "HD_CommonUtilities_$(Configuration)", "d3d11", "DXGI", "dxguid" })
-	includedirs("../Source/HD_CommonUtilities")
+	includedirs("$(SolutionDir)Source/HD_CommonUtilities")
 		
 	warnings("Extra")
 	fatalwarnings({"All"})
 	defines("_CRT_SECURE_NO_WARNINGS")
 
+	shadervariablename("TEMP_%%(Filename)_ByteCode")
+	shaderheaderfileoutput("$(SolutionDir)Source/BlipBlop/TemporaryShaders/%%(Filename).h")
+	shaderobjectfileoutput("$(SolutionDir)Output/CompiledShaders/%%(Filename).cso")
+	shaderoptions("/WX")
+
 	filter("configurations:Retail")
 		defines("_RETAIL")
+	
+	filter("files:" .. solutionDir .. "Source/BlipBlop/VS_*.hlsl")
+		shadertype("Vertex")
+		
+	filter("files:" .. solutionDir .. "Source/BlipBlop/PS_*.hlsl")
+		shadertype("Pixel")
 	
 	filter({})
 	
@@ -112,18 +126,24 @@ project("BlipBlop")
 	{
 		["Objects"] =
 		{
-			"../Source/BlipBlop/Texture.h",
-			"../Source/BlipBlop/Texture.cpp",
-			"../Source/BlipBlop/Vertex.h",
+			solutionDir .. "Source/BlipBlop/Buffer.h",
+			solutionDir .. "Source/BlipBlop/Buffer.cpp",
+			solutionDir .. "Source/BlipBlop/Texture.h",
+			solutionDir .. "Source/BlipBlop/Texture.cpp",
+			solutionDir .. "Source/BlipBlop/Vertex.h",
+			solutionDir .. "Source/BlipBlop/Vertex.cpp"
 		},
 		["RHI"] =
 		{
-			"../Source/BlipBlop/RenderHardwareInterface.h",
-			"../Source/BlipBlop/RenderHardwareInterface.cpp",
-			"../Source/BlipBlop/RHIStructs.h",
+			solutionDir .. "Source/BlipBlop/RenderHardwareInterface.h",
+			solutionDir .. "Source/BlipBlop/RenderHardwareInterface.cpp",
+			solutionDir .. "Source/BlipBlop/RHIStructs.h"
 		},
 		["Shaders"] =
 		{
+			solutionDir .. "Source/BlipBlop/Common.hlsli",
+			solutionDir .. "Source/BlipBlop/VS_VertexShader.hlsl",
+			solutionDir .. "Source/BlipBlop/PS_PixelShader.hlsl"
 		}
 	}
 	

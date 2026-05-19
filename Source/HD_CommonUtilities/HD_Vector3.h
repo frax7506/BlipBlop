@@ -21,12 +21,12 @@ public:
 	float Dot(const HD_Vector3& aOther) const;
 	HD_Vector3 Cross(const HD_Vector3& aOther) const;
 
-	HD_Vector3& operator=(const HD_Vector3& aOther);
 	HD_Vector3 operator+(const HD_Vector3& aOther) const;
 	HD_Vector3 operator-(const HD_Vector3& aOther) const;
 	HD_Vector3 operator*(T aConstant) const;
 	HD_Vector3 operator/(T aConstant) const;
 
+	HD_Vector3& operator=(const HD_Vector3& aOther);
 	HD_Vector3& operator+=(const HD_Vector3& aOther);
 	HD_Vector3& operator-=(const HD_Vector3& aOther);
 	HD_Vector3& operator*=(T aConstant);
@@ -138,16 +138,6 @@ HD_Vector3<T> HD_Vector3<T>::Cross(const HD_Vector3<T>& aOther) const
 }
 
 template<typename T>
-HD_Vector3<T>& HD_Vector3<T>::operator=(const HD_Vector3<T>& aOther)
-{
-	myX = aOther.myX;
-	myY = aOther.myY;
-	myZ = aOther.myZ;
-
-	return *this;
-}
-
-template<typename T>
 HD_Vector3<T> HD_Vector3<T>::operator+(const HD_Vector3<T>& aOther) const
 {
 	return HD_Vector3(myX + aOther.myX, myY + aOther.myY, myZ + aOther.myZ);
@@ -169,6 +159,16 @@ template<typename T>
 HD_Vector3<T> HD_Vector3<T>::operator/(T aConstant) const
 {
 	return HD_Vector3(myX / aConstant, myY / aConstant, myZ / aConstant);
+}
+
+template<typename T>
+HD_Vector3<T>& HD_Vector3<T>::operator=(const HD_Vector3<T>& aOther)
+{
+	myX = aOther.myX;
+	myY = aOther.myY;
+	myZ = aOther.myZ;
+
+	return *this;
 }
 
 template<typename T>
@@ -220,6 +220,7 @@ HD_Vector3<T> operator*(T aConstant, const HD_Vector3<T>& aVector)
 
 typedef HD_Vector3<float> HD_Vector3f;
 typedef HD_Vector3<int> HD_Vector3i;
+typedef HD_Vector3<unsigned int> HD_Vector3ui;
 
 template <> const HD_Vector3<float> HD_Vector3<float>::Zero = { 0.f, 0.f, 0.f };
 template <> const HD_Vector3<float> HD_Vector3<float>::Up = { 0.f, 1.f, 0.f };

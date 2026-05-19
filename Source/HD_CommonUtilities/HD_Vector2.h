@@ -20,12 +20,12 @@ public:
 
 	float Dot(const HD_Vector2& aOther) const;
 
-	HD_Vector2& operator=(const HD_Vector2& aOther);
 	HD_Vector2 operator+(const HD_Vector2& aOther) const;
 	HD_Vector2 operator-(const HD_Vector2& aOther) const;
 	HD_Vector2 operator*(T aConstant) const;
 	HD_Vector2 operator/(T aConstant) const;
 
+	HD_Vector2& operator=(const HD_Vector2& aOther);
 	HD_Vector2& operator+=(const HD_Vector2& aOther);
 	HD_Vector2& operator-=(const HD_Vector2& aOther);
 	HD_Vector2& operator*=(T aConstant);
@@ -118,15 +118,6 @@ float HD_Vector2<T>::Dot(const HD_Vector2<T>& aOther) const
 }
 
 template<typename T>
-HD_Vector2<T>& HD_Vector2<T>::operator=(const HD_Vector2<T>& aOther)
-{
-	myX = aOther.myX;
-	myY = aOther.myY;
-
-	return *this;
-}
-
-template<typename T>
 HD_Vector2<T> HD_Vector2<T>::operator+(const HD_Vector2<T>& aOther) const
 {
 	return HD_Vector2(myX + aOther.myX, myY + aOther.myY);
@@ -148,6 +139,15 @@ template<typename T>
 HD_Vector2<T> HD_Vector2<T>::operator/(T aConstant) const
 {
 	return HD_Vector2(myX / aConstant, myY / aConstant);
+}
+
+template<typename T>
+HD_Vector2<T>& HD_Vector2<T>::operator=(const HD_Vector2<T>& aOther)
+{
+	myX = aOther.myX;
+	myY = aOther.myY;
+
+	return *this;
 }
 
 template<typename T>

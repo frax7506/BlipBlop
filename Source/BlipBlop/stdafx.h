@@ -1,5 +1,7 @@
 #pragma once
 
+#include "HD_Format.h"
+#include "HD_GrowingArray.h"
 #include "HD_Logger.h"
 #include "HD_PreprocessorMacros.h"
 #include "HD_StringUtils.h"

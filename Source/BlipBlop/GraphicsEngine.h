@@ -3,6 +3,9 @@
 #include "RenderHardwareInterface.h"
 #include "Texture.h"
 
+// htodo: temporary include
+#include "Buffer.h"
+
 class GraphicsEngine
 {
 public:
@@ -17,4 +20,7 @@ private:
 
 	RenderHardwareInterface myRHI;
 	Texture myBackBuffer;
+
+	// htodo: temporary code
+	Buffer myTempBuffer;
 };

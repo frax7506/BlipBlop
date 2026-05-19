@@ -1,9 +1,16 @@
 #include "stdafx.h"
 #include "RenderHardwareInterface.h"
 
+#include "Buffer.h"
+#include "RHIStructs.h"
 #include "Texture.h"
+#include "Vertex.h"
 
 #include <vector>
+
+// htodo: temporary includes
+#include "TemporaryShaders/VertexShader.h"
+#include "TemporaryShaders/PixelShader.h"
 
 using namespace Microsoft::WRL;
 
@@ -122,6 +129,51 @@ bool RenderHardwareInterface::Init(HWND aWindowHandle, bool aEnableDebug, Textur
 	Viewport viewport = { 0, 0, static_cast<f32>(clientSize.myX), static_cast<f32>(clientSize.myY), 0, 1 };
 	outBackBuffer.myViewport = viewport;
 
+	// htodo: temporary code
+
+	myContext->IASetPrimitiveTopology(static_cast<D3D11_PRIMITIVE_TOPOLOGY>(Topology::TriangleList));
+
+	HD_GrowingArray<D3D11_INPUT_ELEMENT_DESC> elements;
+	elements.Reserve(Vertex::ourDescription.GetSize());
+
+	// fortsätt här: ourDescription for inte sätt strings
+	for (const VertexElementDesc& desc : Vertex::ourDescription)
+	{
+		D3D11_INPUT_ELEMENT_DESC element = {};
+		element.SemanticName = desc.mySemantic.GetBuffer();
+		element.SemanticIndex = desc.mySemanticIndex;
+		element.Format = static_cast<DXGI_FORMAT>(desc.myFormat);
+
+		element.InputSlot = 0;
+		element.InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
+		element.AlignedByteOffset = D3D11_APPEND_ALIGNED_ELEMENT;
+		element.InstanceDataStepRate = 0;
+
+		elements.PushBack(element);
+	}
+
+	myDevice->CreateInputLayout(
+		elements.GetData(),
+		static_cast<u32>(elements.GetSize()),
+		TEMP_VertexShader_ByteCode,
+		sizeof(TEMP_VertexShader_ByteCode),
+		&myTempInputLayout
+	);
+
+	myContext->IASetInputLayout(myTempInputLayout.Get());
+
+	myDevice->CreateVertexShader(TEMP_VertexShader_ByteCode, sizeof(TEMP_VertexShader_ByteCode), nullptr, &myTempVertexShader);
+	myContext->VSSetShader(myTempVertexShader.Get(), nullptr, 0);
+
+	myDevice->CreatePixelShader(TEMP_PixelShader_ByteCode, sizeof(TEMP_PixelShader_ByteCode), nullptr, &myTempPixelShader);
+	myContext->PSSetShader(myTempPixelShader.Get(), nullptr, 0);
+
+	SetObjectName(myTempInputLayout, "TemporaryInputLayout");
+	SetObjectName(myTempVertexShader, "TemporaryVertexShader");
+	SetObjectName(myTempPixelShader, "TemporaryPixelShader");
+
+	// end of temporary code
+
 	LOG_MESSAGE("RHI started!");
 	return true;
 }
@@ -160,6 +212,62 @@ HD_Vector2ui RenderHardwareInterface::GetClientSize() const
 	const u32 height = clientRect.bottom - clientRect.top;
 
 	return { width, height };
+}
+
+bool RenderHardwareInterface::CreateVertexBuffer(const char* aName, const HD_GrowingArray<Vertex>& aVertexList, Buffer& outBuffer) const
+{
+	if (aVertexList.GetIsEmpty())
+	{
+		LOG_ERROR_F("Failed to create vertex buffer for %s. Vertex list is empty.", aName);
+		return false;
+	}
+
+	D3D11_BUFFER_DESC desc = {};
+	desc.Usage = D3D11_USAGE_IMMUTABLE;
+	desc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	desc.CPUAccessFlags = 0;
+	desc.ByteWidth = static_cast<u32>(sizeof(Vertex) * aVertexList.GetSize());
+
+	D3D11_SUBRESOURCE_DATA data = {};
+	data.pSysMem = aVertexList.GetData();
+
+	const HRESULT result = myDevice->CreateBuffer(&desc, &data, &outBuffer.myBuffer);
+	if (FAILED(result))
+	{
+		LOG_ERROR_F("Failed to create vertex buffer for %s. Failed to create Buffer.", aName);
+		return false;
+	}
+
+	const HD_String bufferName = HD_Format("%s_VX", aName).GetBuffer();
+	SetObjectName(outBuffer.myBuffer, bufferName.GetBuffer());
+
+	outBuffer.myName = aName;
+	outBuffer.mySize = desc.ByteWidth;
+	outBuffer.myStride = sizeof(Vertex);
+	outBuffer.myType = BufferType::VertexBuffer;
+
+	return true;
+}
+
+void RenderHardwareInterface::SetVertexBuffer(const Buffer* aBuffer) const
+{
+	constexpr u32 offset = 0;
+
+	if (aBuffer)
+	{
+		myContext->IASetVertexBuffers(0, 1, aBuffer->myBuffer.GetAddressOf(), &aBuffer->myStride, &offset);
+	}
+	else
+	{
+		ID3D11Buffer* buffer = nullptr;
+		constexpr u32 stride = 0;
+		myContext->IASetVertexBuffers(0, 1, &buffer, &stride, &offset);
+	}
+}
+
+void RenderHardwareInterface::Draw(u32 aNumVertices) const
+{
+	myContext->Draw(aNumVertices, 0);
 }
 
 void RenderHardwareInterface::SetObjectName(const Microsoft::WRL::ComPtr<ID3D11DeviceChild>& aObject, const char* aName) const
