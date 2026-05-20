@@ -9,8 +9,8 @@
 #include <vector>
 
 // htodo: temporary includes
-#include "TemporaryShaders/VertexShader.h"
-#include "TemporaryShaders/PixelShader.h"
+#include "TemporaryShaders/VS_VertexShader.h"
+#include "TemporaryShaders/PS_PixelShader.h"
 
 using namespace Microsoft::WRL;
 
@@ -136,7 +136,6 @@ bool RenderHardwareInterface::Init(HWND aWindowHandle, bool aEnableDebug, Textur
 	HD_GrowingArray<D3D11_INPUT_ELEMENT_DESC> elements;
 	elements.Reserve(Vertex::ourDescription.GetSize());
 
-	// fortsätt här: ourDescription for inte sätt strings
 	for (const VertexElementDesc& desc : Vertex::ourDescription)
 	{
 		D3D11_INPUT_ELEMENT_DESC element = {};
@@ -155,17 +154,17 @@ bool RenderHardwareInterface::Init(HWND aWindowHandle, bool aEnableDebug, Textur
 	myDevice->CreateInputLayout(
 		elements.GetData(),
 		static_cast<u32>(elements.GetSize()),
-		TEMP_VertexShader_ByteCode,
-		sizeof(TEMP_VertexShader_ByteCode),
+		TEMP_VS_VertexShader_ByteCode,
+		sizeof(TEMP_VS_VertexShader_ByteCode),
 		&myTempInputLayout
 	);
 
 	myContext->IASetInputLayout(myTempInputLayout.Get());
 
-	myDevice->CreateVertexShader(TEMP_VertexShader_ByteCode, sizeof(TEMP_VertexShader_ByteCode), nullptr, &myTempVertexShader);
+	myDevice->CreateVertexShader(TEMP_VS_VertexShader_ByteCode, sizeof(TEMP_VS_VertexShader_ByteCode), nullptr, &myTempVertexShader);
 	myContext->VSSetShader(myTempVertexShader.Get(), nullptr, 0);
 
-	myDevice->CreatePixelShader(TEMP_PixelShader_ByteCode, sizeof(TEMP_PixelShader_ByteCode), nullptr, &myTempPixelShader);
+	myDevice->CreatePixelShader(TEMP_PS_PixelShader_ByteCode, sizeof(TEMP_PS_PixelShader_ByteCode), nullptr, &myTempPixelShader);
 	myContext->PSSetShader(myTempPixelShader.Get(), nullptr, 0);
 
 	SetObjectName(myTempInputLayout, "TemporaryInputLayout");

@@ -6,11 +6,8 @@
 
 struct Vertex
 {
-	Vertex();
-	Vertex(const HD_Vector4f& aPosition, const HD_Vector4f& aColor);
+	HD_Vector4f myPosition = { 0.f, 0.f, 0.f, 1.f };
+	HD_Vector4f myColor = { 1.f, 1.f, 1.f, 1.f };
 
-	HD_Vector4f myPosition;
-	HD_Vector4f myColor;
-
-	static const HD_GrowingArray <VertexElementDesc> ourDescription;
+	static const HD_GrowingArray<VertexElementDesc> ourDescription;
 };

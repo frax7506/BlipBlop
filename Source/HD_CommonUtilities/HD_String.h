@@ -55,9 +55,9 @@ HD_Str<T> operator+(const T* aString1, const HD_Str<T>& aString2);
 template<typename T>
 HD_Str<T>::HD_Str()
 	: myLength(0)
-	, myCapacity(1)
+	, myCapacity(2)
 {
-	myData = new T[myCapacity] { 0 };
+	myData = new T[myCapacity]{ 0 };
 }
 
 template<typename T>
@@ -78,10 +78,13 @@ HD_Str<T>::HD_Str(const HD_Str& aString)
 template<typename T>
 HD_Str<T>::HD_Str(HD_Str&& aString)
 {
+	myData = aString.myData;
 	myLength = aString.myLength;
 	myCapacity = aString.myCapacity;
-	myData = aString.myData;
+
 	aString.myData = nullptr;
+	aString.myLength = 0;
+	aString.myCapacity = 0;
 }
 
 template<typename T>
@@ -177,10 +180,13 @@ HD_Str<T>& HD_Str<T>::operator=(HD_Str&& aString)
 {
 	HD_SafeDeleteArray(myData);
 
+	myData = aString.myData;
 	myLength = aString.myLength;
 	myCapacity = aString.myCapacity;
-	myData = aString.myData;
+
 	aString.myData = nullptr;
+	aString.myLength = 0;
+	aString.myCapacity = 0;
 
 	return *this;
 }

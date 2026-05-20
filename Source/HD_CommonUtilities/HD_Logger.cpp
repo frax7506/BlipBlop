@@ -35,6 +35,18 @@ HD_LogMessage::~HD_LogMessage()
 	HD_SafeDeleteArray(myData);
 }
 
+HD_LogMessage& HD_LogMessage::operator=(const HD_LogMessage& aLogMessage)
+{
+	assert(aLogMessage.myMode != StringMode_Invalid);
+
+	int length = HD_Strlen(aLogMessage.myData);
+	int sizeInBytes = aLogMessage.myMode == StringMode_NonWide ? (length * sizeof(char)) : (length * sizeof(wchar_t));
+	memcpy(myData, aLogMessage.myData, length * sizeInBytes);
+	myMode = aLogMessage.myMode;
+
+	return *this;
+}
+
 HD_LogMessage& HD_LogMessage::operator=(HD_LogMessage&& aLogMessage)
 {
 	HD_SafeDeleteArray(myData);
@@ -78,6 +90,14 @@ HD_LogEntry::HD_LogEntry(const wchar_t* aLogMessage, HD_LogLevel aLogLevel)
 	: myLogMessage(aLogMessage)
 	, myLogLevel(aLogLevel)
 {
+}
+
+HD_LogEntry& HD_LogEntry::operator=(const HD_LogEntry& aLogEntry)
+{
+	myLogMessage = aLogEntry.myLogMessage;
+	myLogLevel = aLogEntry.myLogLevel;
+
+	return *this;
 }
 
 HD_LogEntry& HD_LogEntry::operator=(HD_LogEntry&& aLogEntry)

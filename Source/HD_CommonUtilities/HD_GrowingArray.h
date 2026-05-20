@@ -32,9 +32,6 @@ public:
 	void Remove(int aIndex);
 	void RemoveCyclic(int aIndex);
 	void RemoveAll();
-	void Delete(int aIndex);
-	void DeleteCyclic(int aIndex);
-	void DeleteAll();
 
 	int GetSize() const;
 	bool GetIsEmpty() const;
@@ -92,35 +89,55 @@ HD_GrowingArray<T>::HD_GrowingArray(int aCapacity)
 
 template<typename T>
 HD_GrowingArray<T>::HD_GrowingArray(const HD_GrowingArray& aGrowingArray)
+	: mySize(0)
+	, myCapacity(2)
 {
-	myData = new T[aGrowingArray.myCapacity];
-	memcpy(myData, aGrowingArray.myData, sizeof(T) * aGrowingArray.mySize);
-	mySize = aGrowingArray.mySize;
-	myCapacity = aGrowingArray.myCapacity;
+	myData = new T[myCapacity];
+
+	Reserve(aGrowingArray.mySize);
+
+	for (int i = 0; i < aGrowingArray.GetSize(); i++)
+	{
+		PushBack(aGrowingArray[i]);
+	}
 }
 
 template<typename T>
 HD_GrowingArray<T>::HD_GrowingArray(HD_GrowingArray&& aGrowingArray)
 {
 	myData = aGrowingArray.myData;
-	aGrowingArray.myData = nullptr;
 	mySize = aGrowingArray.mySize;
 	myCapacity = aGrowingArray.myCapacity;
+
+	aGrowingArray.myData = nullptr;
+	aGrowingArray.mySize = 0;
+	aGrowingArray.myCapacity = 0;
 }
 
 template<typename T>
 HD_GrowingArray<T>::HD_GrowingArray(std::initializer_list<T> aInitializerList)
+	: mySize(0)
+	, myCapacity(2)
 {
+	myData = new T[myCapacity];
+
 	int initializerListSize = static_cast<int>(aInitializerList.size());
-	myData = new T[initializerListSize];
-	memcpy(myData, aInitializerList.begin(), sizeof(T) * initializerListSize);
-	mySize = initializerListSize;
-	myCapacity = initializerListSize;
+	Reserve(initializerListSize);
+
+	for (int i = 0; i < initializerListSize; i++)
+	{
+		PushBack(*(aInitializerList.begin() + i));
+	}
 }
 
 template<typename T>
 HD_GrowingArray<T>::~HD_GrowingArray()
 {
+	for (int i = 0; i < mySize; i++)
+	{
+		myData[i].~T();
+	}
+
 	HD_SafeDeleteArray(myData);
 }
 
@@ -194,8 +211,11 @@ void HD_GrowingArray<T>::Remove(int aIndex)
 	assert(!GetIsEmpty() && 0 <= aIndex && aIndex < mySize);
 
 	if (aIndex < mySize - 1)
-		memcpy(myData + aIndex, myData + (aIndex + 1), sizeof(T) * (mySize - 1 - aIndex));
-	
+	{
+		for (int i = aIndex; i < mySize - 1; i++)
+			myData[i] = HD_Move(myData[i + 1]);
+	}
+
 	mySize--;
 }
 
@@ -205,7 +225,7 @@ void HD_GrowingArray<T>::RemoveCyclic(int aIndex)
 	assert(!GetIsEmpty() && 0 <= aIndex && aIndex < mySize);
 
 	if (aIndex < mySize - 1)
-		myData[aIndex] = GetLast();
+		myData[aIndex] = HD_Move(GetLast());
 
 	mySize--;
 }
@@ -213,39 +233,6 @@ void HD_GrowingArray<T>::RemoveCyclic(int aIndex)
 template<typename T>
 void HD_GrowingArray<T>::RemoveAll()
 {
-	mySize = 0;
-}
-
-template<typename T>
-void HD_GrowingArray<T>::Delete(int aIndex)
-{
-	assert(!GetIsEmpty() && 0 <= aIndex && aIndex < mySize);
-
-	HD_SafeDelete(myData[aIndex]);
-	if (aIndex < mySize - 1)
-		memcpy(myData + aIndex, myData + (aIndex + 1), sizeof(T) * (mySize - 1 - aIndex));
-
-	mySize--;
-}
-
-template<typename T>
-void HD_GrowingArray<T>::DeleteCyclic(int aIndex)
-{
-	assert(!GetIsEmpty() && 0 <= aIndex && aIndex < mySize);
-
-	HD_SafeDelete(myData[aIndex]);
-	if (aIndex < mySize - 1)
-		myData[aIndex] = GetLast();
-
-	mySize--;
-}
-
-template<typename T>
-void HD_GrowingArray<T>::DeleteAll()
-{
-	for (int i = 0; i < mySize; i++)
-		HD_SafeDelete(myData[i]);
-
 	mySize = 0;
 }
 
@@ -318,17 +305,13 @@ const T& HD_GrowingArray<T>::operator[](int aIndex) const
 template<typename T>
 HD_GrowingArray<T>& HD_GrowingArray<T>::operator=(const HD_GrowingArray& aGrowingArray)
 {
-	bool isCurrentBufferTooSmall = myCapacity < aGrowingArray.mySize;
+	RemoveAll();
+	Reserve(aGrowingArray.mySize);
 
-	if (isCurrentBufferTooSmall)
+	for (int i = 0; i < aGrowingArray.GetSize(); i++)
 	{
-		HD_SafeDeleteArray(myData);
-		myData = new T[aGrowingArray.myCapacity];
-		myCapacity = aGrowingArray.myCapacity;
+		PushBack(aGrowingArray[i]);
 	}
-
-	memcpy(myData, aGrowingArray.myData, sizeof(T) * aGrowingArray.mySize);
-	mySize = aGrowingArray.mySize;
 
 	return *this;
 }
@@ -339,9 +322,12 @@ HD_GrowingArray<T>& HD_GrowingArray<T>::operator=(HD_GrowingArray&& aGrowingArra
 	HD_SafeDeleteArray(myData);
 
 	myData = aGrowingArray.myData;
-	aGrowingArray.myData = nullptr;
 	mySize = aGrowingArray.mySize;
 	myCapacity = aGrowingArray.myCapacity;
+
+	aGrowingArray.myData = nullptr;
+	aGrowingArray.mySize = 0;
+	aGrowingArray.myCapacity = 0;
 
 	return *this;
 }
@@ -349,18 +335,15 @@ HD_GrowingArray<T>& HD_GrowingArray<T>::operator=(HD_GrowingArray&& aGrowingArra
 template<typename T>
 HD_GrowingArray<T>& HD_GrowingArray<T>::operator=(std::initializer_list<T> aInitializerList)
 {
+	RemoveAll();
+
 	int initializerListSize = static_cast<int>(aInitializerList.size());
-	bool isCurrentBufferTooSmall = myCapacity < initializerListSize;
+	Reserve(initializerListSize);
 
-	if (isCurrentBufferTooSmall)
+	for (int i = 0; i < initializerListSize; i++)
 	{
-		HD_SafeDeleteArray(myData);
-		myData = new T[initializerListSize];
-		myCapacity = initializerListSize;
+		PushBack(*(aInitializerList.begin() + i));
 	}
-
-	memcpy(myData, aInitializerList.begin(), sizeof(T) * initializerListSize);
-	mySize = initializerListSize;
 
 	return *this;
 }
@@ -433,7 +416,10 @@ void HD_GrowingArray<T>::Grow(int aNewCapacity)
 {
 	T* oldData = myData;
 	myData = new T[aNewCapacity];
-	memcpy(myData, oldData, sizeof(T) * mySize);
+
+	for (int i = 0; i < mySize; i++)
+		myData[i] = oldData[i];
+
 	HD_SafeDeleteArray(oldData);
 	myCapacity = aNewCapacity;
 }
@@ -442,10 +428,14 @@ template<typename T>
 void HD_GrowingArray<T>::InsertAtIndex(const T& aItem, int aIndex)
 {
 	CheckSizeAndGrowIfNecessary();
-
-	memcpy(myData + (aIndex + 1), myData + aIndex, sizeof(T) * (mySize - aIndex));
-	myData[aIndex] = aItem;
 	mySize++;
+
+	for (int i = mySize - 1; i > aIndex; i--)
+	{
+		myData[i] = HD_Move(myData[i - 1]);
+	}
+
+	myData[aIndex] = aItem;
 }
 
 template<typename T>

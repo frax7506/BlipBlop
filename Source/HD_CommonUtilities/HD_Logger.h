@@ -32,6 +32,7 @@ public:
 	HD_LogMessage(const wchar_t* aString);
 	~HD_LogMessage();
 
+	HD_LogMessage& operator=(const HD_LogMessage& aLogMessage);
 	HD_LogMessage& operator=(HD_LogMessage&& aLogMessage);
 
 	const char* GetBuffer() const;
@@ -58,6 +59,7 @@ public:
 	HD_LogEntry(const char* aLogMessage, HD_LogLevel aLogLevel);
 	HD_LogEntry(const wchar_t* aLogMessage, HD_LogLevel aLogLevel);
 
+	HD_LogEntry& operator=(const HD_LogEntry& aLogEntry);
 	HD_LogEntry& operator=(HD_LogEntry&& aLogEntry);
 
 	HD_LogMessage myLogMessage;
