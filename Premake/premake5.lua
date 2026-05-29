@@ -43,6 +43,7 @@ group("Utilities")
 			["Containers"] =
 			{
 				sourceHDCommonUtilitiesPath .. "HD_ArrayIterator.h",
+				sourceHDCommonUtilitiesPath .. "HD_Bitset.h",
 				sourceHDCommonUtilitiesPath .. "HD_CircularArray.h",
 				sourceHDCommonUtilitiesPath .. "HD_DataBuffer.h",
 				sourceHDCommonUtilitiesPath .. "HD_GrowingArray.h",
@@ -63,7 +64,6 @@ group("Utilities")
 			},
 			["Misc"] =
 			{
-				sourceHDCommonUtilitiesPath .. "HD_Bitset.h",
 				sourceHDCommonUtilitiesPath .. "HD_ExeArgs.h",
 				sourceHDCommonUtilitiesPath .. "HD_ExeArgs.cpp",
 				sourceHDCommonUtilitiesPath .. "HD_Format.h",
@@ -71,15 +71,18 @@ group("Utilities")
 				sourceHDCommonUtilitiesPath .. "HD_IsFundamental.h",
 				sourceHDCommonUtilitiesPath .. "HD_Logger.h",
 				sourceHDCommonUtilitiesPath .. "HD_Logger.cpp",
+				sourceHDCommonUtilitiesPath .. "HD_Move.h",
 				sourceHDCommonUtilitiesPath .. "HD_PreprocessorMacros.h",
 				sourceHDCommonUtilitiesPath .. "HD_Random.h",
 				sourceHDCommonUtilitiesPath .. "HD_Random.cpp",
+				sourceHDCommonUtilitiesPath .. "HD_SafeDelete.h",
 				sourceHDCommonUtilitiesPath .. "HD_Singleton.h",
 				sourceHDCommonUtilitiesPath .. "HD_StringUtils.h",
 				sourceHDCommonUtilitiesPath .. "HD_Time.h",
 				sourceHDCommonUtilitiesPath .. "HD_Time.cpp",
 				sourceHDCommonUtilitiesPath .. "HD_Types.h",
-				sourceHDCommonUtilitiesPath .. "HD_Utilities.h",
+				sourceHDCommonUtilitiesPath .. "HD_TypeTraits.h",
+				sourceHDCommonUtilitiesPath .. "HD_Unused.h",
 				sourceHDCommonUtilitiesPath .. "OptimizedWindowsInclude.h"
 			},
 			["Natvis"] =
