@@ -170,7 +170,7 @@ project("ModelViewer")
 	targetdir("$(SolutionDir)Output")
 	objdir("$(SolutionDir)Intermediate/ModelViewer")
 	location(sourceModelViewerFolder)
-	files({ sourceModelViewerPath .. "ModelViewer/*.h", sourceModelViewerPath .. "ModelViewer/*.cpp" })
+	files({ sourceModelViewerPath .. "*.h", sourceModelViewerPath .. "*.cpp" })
 	pchheader("stdafx.h")
 	pchsource(sourceModelViewerPath .. "stdafx.cpp")
 	

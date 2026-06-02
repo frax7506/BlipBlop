@@ -39,7 +39,7 @@ bool RenderHardwareInterface::Init(HWND aWindowHandle, bool aEnableDebug, Textur
 	HD_GrowingArray<ComPtr<IDXGIAdapter>> adapters;
 	while (dxFactory->EnumAdapters(static_cast<u32>(adapters.GetSize()), &tempAdapter) != DXGI_ERROR_NOT_FOUND)
 	{
-		adapters.EmplaceBack(tempAdapter);
+		adapters.PushBack(tempAdapter);
 	}
 
 	ComPtr<IDXGIAdapter> selectedAdapter;
