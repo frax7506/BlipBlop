@@ -6,8 +6,6 @@
 #include "Texture.h"
 #include "Vertex.h"
 
-#include <vector>
-
 // htodo: temporary includes
 #include "TemporaryShaders/VS_VertexShader.h"
 #include "TemporaryShaders/PS_PixelShader.h"
@@ -38,10 +36,10 @@ bool RenderHardwareInterface::Init(HWND aWindowHandle, bool aEnableDebug, Textur
 	LOG_MESSAGE("Initializing RHI...");
 
 	ComPtr<IDXGIAdapter> tempAdapter;
-	std::vector<ComPtr<IDXGIAdapter>> adapters;
-	while (dxFactory->EnumAdapters(static_cast<u32>(adapters.size()), &tempAdapter) != DXGI_ERROR_NOT_FOUND)
+	HD_GrowingArray<ComPtr<IDXGIAdapter>> adapters;
+	while (dxFactory->EnumAdapters(static_cast<u32>(adapters.GetSize()), &tempAdapter) != DXGI_ERROR_NOT_FOUND)
 	{
-		adapters.emplace_back(tempAdapter);
+		adapters.EmplaceBack(tempAdapter);
 	}
 
 	ComPtr<IDXGIAdapter> selectedAdapter;

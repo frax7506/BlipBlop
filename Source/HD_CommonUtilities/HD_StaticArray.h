@@ -3,9 +3,8 @@
 #include "HD_ArrayIterator.h"
 
 #include <cassert>
-#include <cstring>
 
-template<typename T, int N>
+template<typename T, int aSize>
 class HD_StaticArray
 {
 public:
@@ -19,6 +18,7 @@ public:
 
 	T& operator[](int aIndex);
 	const T& operator[](int aIndex) const;
+
 	HD_StaticArray& operator=(const HD_StaticArray& aStaticArray);
 
 	Iterator begin();
@@ -27,69 +27,71 @@ public:
 	ConstIterator end() const;
 
 private:
-	T myData[N];
+	T myData[aSize];
 };
 
-template<typename T, int N>
-HD_StaticArray<T, N>::HD_StaticArray()
+template<typename T, int aSize>
+HD_StaticArray<T, aSize>::HD_StaticArray()
 {
-	for (int i = 0; i < N; ++i)
+	for (int i = 0; i < aSize; ++i)
 		myData[i] = T();
 }
 
-template<typename T, int N>
-HD_StaticArray<T, N>::HD_StaticArray(const HD_StaticArray& aStaticArray)
+template<typename T, int aSize>
+HD_StaticArray<T, aSize>::HD_StaticArray(const HD_StaticArray& aStaticArray)
 {
-	memcpy(myData, aStaticArray.myData, sizeof(T) * N);
+	(*this) = aStaticArray;
 }
 
-template<typename T, int N>
-int HD_StaticArray<T, N>::Size() const
+template<typename T, int aSize>
+int HD_StaticArray<T, aSize>::Size() const
 {
-	return N;
+	return aSize;
 }
 
-template<typename T, int N>
-T& HD_StaticArray<T, N>::operator[](int aIndex)
+template<typename T, int aSize>
+T& HD_StaticArray<T, aSize>::operator[](int aIndex)
 {
-	assert(0 <= aIndex && aIndex < N);
+	assert(0 <= aIndex && aIndex < aSize);
 	return myData[aIndex];
 }
 
-template<typename T, int N>
-const T& HD_StaticArray<T, N>::operator[](int aIndex) const
+template<typename T, int aSize>
+const T& HD_StaticArray<T, aSize>::operator[](int aIndex) const
 {
-	assert(0 <= aIndex && aIndex < N);
+	assert(0 <= aIndex && aIndex < aSize);
 	return myData[aIndex];
 }
 
-template<typename T, int N>
-HD_StaticArray<T, N>& HD_StaticArray<T, N>::operator=(const HD_StaticArray& aStaticArray)
+template<typename T, int aSize>
+HD_StaticArray<T, aSize>& HD_StaticArray<T, aSize>::operator=(const HD_StaticArray& aStaticArray)
 {
-	memcpy(myData, aStaticArray.myData, sizeof(T) * N);
+	for (int i = 0; i < aSize; i++)
+		myData[i] = aStaticArray[i];
+
 	return *this;
 }
 
-template<typename T, int N>
-typename HD_StaticArray<T, N>::Iterator HD_StaticArray<T, N>::begin()
+template<typename T, int aSize>
+typename HD_StaticArray<T, aSize>::Iterator HD_StaticArray<T, aSize>::begin()
 {
 	return Iterator(myData);
 }
 
-template<typename T, int N>
-typename HD_StaticArray<T, N>::Iterator HD_StaticArray<T, N>::end()
+template<typename T, int aSize>
+typename HD_StaticArray<T, aSize>::Iterator HD_StaticArray<T, aSize>::end()
 {
-	return Iterator(myData + N);
+	return Iterator(myData + aSize);
 }
 
-template<typename T, int N>
-typename HD_StaticArray<T, N>::ConstIterator HD_StaticArray<T, N>::begin() const
+template<typename T, int aSize>
+typename HD_StaticArray<T, aSize>::ConstIterator HD_StaticArray<T, aSize>::begin() const
 {
 	return ConstIterator(myData);
 }
 
-template<typename T, int N>
-typename HD_StaticArray<T, N>::ConstIterator HD_StaticArray<T, N>::end() const
+template<typename T, int aSize>
+typename HD_StaticArray<T, aSize>::ConstIterator HD_StaticArray<T, aSize>::end() const
 {
-	return ConstIterator(myData + N);
+	return ConstIterator(myData + aSize);
 }

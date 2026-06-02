@@ -16,7 +16,7 @@ size_t HD_Hash(const T& aDataToHash)
 
 // Forwarding a hash of HD_String to std::string is not ideal
 // * Every time a HD_String is hashed then a std::string
-//		object is created which triggers a heap allocation.
+//		object is created which might trigger a heap allocation.
 //		However, at the moment only HD_ExeArgs is making use
 //		of hashing HD_String:s, and that whole class is only
 //		defined in debug so I'm not too worried about it. In

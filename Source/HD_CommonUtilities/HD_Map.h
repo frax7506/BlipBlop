@@ -1,7 +1,7 @@
 #pragma once
 
 #include "HD_Math.h"
-#include "HD_Utilities.h"
+#include "HD_SafeDelete.h"
 
 #include <cassert>
 

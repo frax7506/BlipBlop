@@ -8,26 +8,28 @@
 #include <mutex>
 #include <thread>
 
-#define LOG_MESSAGE(aLogMessage) HD_Logger::GetInstance().Log(aLogMessage, HD_LogLevel_Log);
-#define LOG_WARNING(aLogMessage) HD_Logger::GetInstance().Log(aLogMessage, HD_LogLevel_Warning);
-#define LOG_ERROR(aLogMessage) HD_Logger::GetInstance().Log(aLogMessage, HD_LogLevel_Error);
+#define LOG_MESSAGE(aLogMessage) HD_Logger::GetInstance().Log(aLogMessage, eLogLevel_Log);
+#define LOG_WARNING(aLogMessage) HD_Logger::GetInstance().Log(aLogMessage, eLogLevel_Warning);
+#define LOG_ERROR(aLogMessage) HD_Logger::GetInstance().Log(aLogMessage, eLogLevel_Error);
 
-#define LOG_MESSAGE_F(...) HD_Logger::GetInstance().Log(HD_Format(__VA_ARGS__).GetBuffer(), HD_LogLevel_Log);
-#define LOG_WARNING_F(...) HD_Logger::GetInstance().Log(HD_Format(__VA_ARGS__).GetBuffer(), HD_LogLevel_Warning);
-#define LOG_ERROR_F(...) HD_Logger::GetInstance().Log(HD_Format(__VA_ARGS__).GetBuffer(), HD_LogLevel_Error);
+#define LOG_MESSAGE_F(...) HD_Logger::GetInstance().Log(HD_Format(__VA_ARGS__).GetBuffer(), eLogLevel_Log);
+#define LOG_WARNING_F(...) HD_Logger::GetInstance().Log(HD_Format(__VA_ARGS__).GetBuffer(), eLogLevel_Warning);
+#define LOG_ERROR_F(...) HD_Logger::GetInstance().Log(HD_Format(__VA_ARGS__).GetBuffer(), eLogLevel_Error);
 
-enum HD_LogLevel : char
+enum eLogLevel : char
 {
-	HD_LogLevel_Invalid,
-	HD_LogLevel_Log,
-	HD_LogLevel_Warning,
-	HD_LogLevel_Error,
+	eLogLevel_Invalid,
+	eLogLevel_Log,
+	eLogLevel_Warning,
+	eLogLevel_Error,
 };
 
 class HD_LogMessage
 {
 public:
 	HD_LogMessage();
+	HD_LogMessage(const HD_LogMessage& aLogMessage);
+	HD_LogMessage(HD_LogMessage&& aLogMessage);
 	HD_LogMessage(const char* aString);
 	HD_LogMessage(const wchar_t* aString);
 	~HD_LogMessage();
@@ -41,29 +43,33 @@ public:
 	bool GetIsWide() const;
 
 private:
-	enum StringMode : char
+	enum eStringMode : char
 	{
-		StringMode_Invalid,
-		StringMode_NonWide,
-		StringMode_Wide,
+		eStringMode_Invalid,
+		eStringMode_NonWide,
+		eStringMode_Wide,
 	};
 
+	void InitFromLogMessage(const HD_LogMessage& aLogMessage);
+
 	char* myData;
-	StringMode myMode;
+	eStringMode myMode;
 };
 
 class HD_LogEntry
 {
 public:
 	HD_LogEntry();
-	HD_LogEntry(const char* aLogMessage, HD_LogLevel aLogLevel);
-	HD_LogEntry(const wchar_t* aLogMessage, HD_LogLevel aLogLevel);
+	HD_LogEntry(const HD_LogEntry& aLogEntry);
+	HD_LogEntry(HD_LogEntry&& aLogEntry);
+	HD_LogEntry(const char* aLogMessage, eLogLevel aLogLevel);
+	HD_LogEntry(const wchar_t* aLogMessage, eLogLevel aLogLevel);
 
 	HD_LogEntry& operator=(const HD_LogEntry& aLogEntry);
 	HD_LogEntry& operator=(HD_LogEntry&& aLogEntry);
 
 	HD_LogMessage myLogMessage;
-	HD_LogLevel myLogLevel;
+	eLogLevel myLogLevel;
 };
 
 class HD_Logger : public HD_Singleton<HD_Logger>
@@ -72,8 +78,8 @@ public:
 	HD_Logger();
 	~HD_Logger();
 
-	void Log(const char* aLogMessage, HD_LogLevel aLogLevel);
-	void Log(const wchar_t* aLogMessage, HD_LogLevel aLogLevel);
+	void Log(const char* aLogMessage, eLogLevel aLogLevel);
+	void Log(const wchar_t* aLogMessage, eLogLevel aLogLevel);
 
 private:
 	void LogThread();

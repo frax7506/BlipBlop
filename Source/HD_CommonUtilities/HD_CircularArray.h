@@ -1,5 +1,7 @@
 #pragma once
 
+#include "HD_Move.h"
+
 #include <cassert>
 #include <cstring>
 
@@ -16,13 +18,18 @@ public:
 	HD_CircularArray();
 
 	void PushBack(const T& aItem);
+	void PushBack(T&& aItem);
+
+	template<typename... Args>
+	void EmplaceBack(Args&&... args);
+
 	void GetFirstAndRemove(T& outItem);
 
 	void Clear();
 
 	int GetSize() const;
 	int GetCapacity() const;
-	bool IsEmpty() const;
+	bool GetIsEmpty() const;
 
 	void EnableOverflow();
 	void DisableOverflow();
@@ -50,17 +57,30 @@ HD_CircularArray<T, aCapacity>::HD_CircularArray()
 	: myFirstIndex(0)
 	, myWriteIndex(0)
 	, mySize(0)
+	, myOverflowBehaviour(eOverflowBehaviour_Enable)
+	, myData()
 {
-	myOverflowBehaviour = eOverflowBehaviour_Enable;
-	memset(myData, 0, sizeof(T) * aCapacity);
 }
 
 template<typename T, int aCapacity>
 void HD_CircularArray<T, aCapacity>::PushBack(const T& aItem)
 {
+	EmplaceBack(aItem);
+}
+
+template<typename T, int aCapacity>
+void HD_CircularArray<T, aCapacity>::PushBack(T&& aItem)
+{
+	EmplaceBack(HD_Move(aItem));
+}
+
+template<typename T, int aCapacity>
+template<typename... Args>
+void HD_CircularArray<T, aCapacity>::EmplaceBack(Args&&... args)
+{
 	assert(myOverflowBehaviour != eOverflowBehaviour_Disable || mySize + 1 <= aCapacity);
 
-	memcpy(myData + myWriteIndex, &aItem, sizeof(T));
+	new (myData + myWriteIndex) T(HD_Forward<Args>(args)...);
 
 	if (myWriteIndex == myFirstIndex && mySize > 0)
 	{
@@ -77,9 +97,9 @@ void HD_CircularArray<T, aCapacity>::PushBack(const T& aItem)
 template<typename T, int aCapacity>
 void HD_CircularArray<T, aCapacity>::GetFirstAndRemove(T& outItem)
 {
-	assert(!IsEmpty());
+	assert(!GetIsEmpty());
 
-	memcpy(&outItem, myData + myFirstIndex, sizeof(T));
+	outItem = myData[myFirstIndex];
 	myFirstIndex = (myFirstIndex + 1) % aCapacity;
 	mySize--;
 }
@@ -105,7 +125,7 @@ int HD_CircularArray<T, aCapacity>::GetCapacity() const
 }
 
 template<typename T, int aCapacity>
-bool HD_CircularArray<T, aCapacity>::IsEmpty() const
+bool HD_CircularArray<T, aCapacity>::GetIsEmpty() const
 {
 	return mySize == 0;
 }
