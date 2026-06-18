@@ -2,13 +2,8 @@
 *.sln
 
 /Intermediate
-
-/Output
-
 /Lib
-
-*.vcxproj
-*.vcxproj.filters
-*.vcxproj.user
+/Output
+/ProjectFiles
 
 copy_hd_common_utilities.bat
