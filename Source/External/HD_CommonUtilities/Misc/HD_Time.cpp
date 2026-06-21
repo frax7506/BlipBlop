@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "HD_Time.h"
 
 #include <chrono>

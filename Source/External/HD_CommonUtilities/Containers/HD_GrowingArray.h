@@ -168,6 +168,7 @@ void HD_GrowingArray<T>::EmplaceBack(Args&&... args)
 {
 	CheckSizeAndGrowIfNecessary();
 
+	myData[mySize].~T();
 	new (myData + mySize) T(HD_Forward<Args>(args)...);
 	mySize++;
 }

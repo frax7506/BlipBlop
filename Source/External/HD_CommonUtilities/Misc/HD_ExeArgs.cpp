@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "HD_ExeArgs.h"
 
 #if !IS_RETAIL_BUILD

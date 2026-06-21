@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "HD_Logger.h"
 
 #include "OptimizedWindowsInclude.h"

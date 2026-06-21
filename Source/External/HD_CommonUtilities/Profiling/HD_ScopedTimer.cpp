@@ -1,7 +1,9 @@
-#include "stdafx.h"
 #include "HD_ScopedTimer.h"
 
 #include "HD_Time.h"
+
+#include <cstdio>
+#include <cstring>
 
 HD_ScopedTimer::HD_ScopedTimer(const char* aTitle)
 {

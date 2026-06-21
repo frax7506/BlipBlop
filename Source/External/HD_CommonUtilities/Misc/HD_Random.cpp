@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "HD_Random.h"
 
 float HD_Random::GetRandomFloat(float aMin, float aMax)

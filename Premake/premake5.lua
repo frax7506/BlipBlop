@@ -1,8 +1,12 @@
 projectRootFolder = ".."
 projectRootPath = projectRootFolder .. "/"
 
-sourceHDCommonUtilitiesFolder = projectRootPath .. "Source/HD_CommonUtilities"
-sourceHDCommonUtilitiesPath = sourceHDCommonUtilitiesFolder .. "/"
+projectFilesExternalFolder = projectRootPath .. "ProjectFiles/External"
+projectFilesBlipBlopFolder = projectRootPath .. "ProjectFiles/BlipBlop"
+projectFilesModelViewerFolder = projectRootPath .. "ProjectFiles/ModelViewer"
+
+sourceExternalFolder = projectRootPath .. "Source/External"
+sourceExternalPath = sourceExternalFolder .. "/"
 
 sourceBlipBlopFolder = projectRootPath .. "Source/BlipBlop"
 sourceBlipBlopPath = sourceBlipBlopFolder .. "/"
@@ -15,105 +19,77 @@ workspace("BlipBlop")
 	platforms("x64")
 	location(projectRootFolder)
 	
-group("Utilities")
-	project("HD_CommonUtilities")
-		kind("StaticLib")
-		language("C++")
-		cppdialect("C++17")
+project("External")
+	kind("StaticLib")
+	language("C++")
+	cppdialect("C++17")
 	
-		targetname("HD_CommonUtilities_$(Configuration)")
-		targetdir("$(SolutionDir)Lib")
-		objdir("$(SolutionDir)Intermediate/HD_CommonUtilities")
-		location(sourceHDCommonUtilitiesFolder)
-		files({ sourceHDCommonUtilitiesPath .. "*.h", sourceHDCommonUtilitiesPath .. "*.cpp", sourceHDCommonUtilitiesPath .. "HD_CommonUtilities.natvis" })
-		pchheader("stdafx.h")
-		pchsource(sourceHDCommonUtilitiesPath .. "stdafx.cpp")
-		
-		warnings("Extra")
-		fatalwarnings("All")
-		defines("_CRT_SECURE_NO_WARNINGS")
+	targetname("External_$(Configuration)")
+	targetdir("$(SolutionDir)Output/External")
+	objdir("$(SolutionDir)Intermediate/External")
+	location(projectFilesExternalFolder)
+	files
+	{
+		sourceExternalPath .. "**.h",
+		sourceExternalPath .. "**.cpp",
+		sourceExternalPath .. "**.natvis",
+	}
+
+	vpaths
+	{
+		["HD_CommonUtilities/*"] = sourceExternalPath .. "HD_CommonUtilities/**"
+	}
 	
-		filter("configurations:Retail")
-			defines("_RETAIL")
+	includedirs
+	{
+		"$(SolutionDir)Source/External/HD_CommonUtilities/Containers",
+		"$(SolutionDir)Source/External/HD_CommonUtilities/Math",
+		"$(SolutionDir)Source/External/HD_CommonUtilities/Misc",
+		"$(SolutionDir)Source/External/HD_CommonUtilities/Profiling"
+	}
 	
-		filter({})
+	warnings("Extra")
+	fatalwarnings("All")
+	defines("_CRT_SECURE_NO_WARNINGS")
 	
-		vpaths
-		{
-			["Containers"] =
-			{
-				sourceHDCommonUtilitiesPath .. "HD_ArrayIterator.h",
-				sourceHDCommonUtilitiesPath .. "HD_Bitset.h",
-				sourceHDCommonUtilitiesPath .. "HD_CircularArray.h",
-				sourceHDCommonUtilitiesPath .. "HD_DataBuffer.h",
-				sourceHDCommonUtilitiesPath .. "HD_GrowingArray.h",
-				sourceHDCommonUtilitiesPath .. "HD_HashMap.h",
-				sourceHDCommonUtilitiesPath .. "HD_Map.h",
-				sourceHDCommonUtilitiesPath .. "HD_Pair.h",
-				sourceHDCommonUtilitiesPath .. "HD_StaticArray.h",
-				sourceHDCommonUtilitiesPath .. "HD_StaticStack.h",
-				sourceHDCommonUtilitiesPath .. "HD_String.h"
-			},
-			["Math"] =
-			{
-				sourceHDCommonUtilitiesPath .. "HD_AABB_2D.h",
-				sourceHDCommonUtilitiesPath .. "HD_Math.h",
-				sourceHDCommonUtilitiesPath .. "HD_Vector2.h",
-				sourceHDCommonUtilitiesPath .. "HD_Vector3.h",
-				sourceHDCommonUtilitiesPath .. "HD_Vector4.h"
-			},
-			["Misc"] =
-			{
-				sourceHDCommonUtilitiesPath .. "HD_ExeArgs.h",
-				sourceHDCommonUtilitiesPath .. "HD_ExeArgs.cpp",
-				sourceHDCommonUtilitiesPath .. "HD_Format.h",
-				sourceHDCommonUtilitiesPath .. "HD_Hash.h",
-				sourceHDCommonUtilitiesPath .. "HD_IsFundamental.h",
-				sourceHDCommonUtilitiesPath .. "HD_Logger.h",
-				sourceHDCommonUtilitiesPath .. "HD_Logger.cpp",
-				sourceHDCommonUtilitiesPath .. "HD_Move.h",
-				sourceHDCommonUtilitiesPath .. "HD_PreprocessorMacros.h",
-				sourceHDCommonUtilitiesPath .. "HD_Random.h",
-				sourceHDCommonUtilitiesPath .. "HD_Random.cpp",
-				sourceHDCommonUtilitiesPath .. "HD_SafeDelete.h",
-				sourceHDCommonUtilitiesPath .. "HD_Singleton.h",
-				sourceHDCommonUtilitiesPath .. "HD_StringUtils.h",
-				sourceHDCommonUtilitiesPath .. "HD_Time.h",
-				sourceHDCommonUtilitiesPath .. "HD_Time.cpp",
-				sourceHDCommonUtilitiesPath .. "HD_Types.h",
-				sourceHDCommonUtilitiesPath .. "HD_TypeTraits.h",
-				sourceHDCommonUtilitiesPath .. "HD_Unused.h",
-				sourceHDCommonUtilitiesPath .. "OptimizedWindowsInclude.h"
-			},
-			["Natvis"] =
-			{
-				sourceHDCommonUtilitiesPath .. "HD_CommonUtilities.natvis"
-			},
-			["Profiling"] =
-			{
-				sourceHDCommonUtilitiesPath .. "HD_ScopedTimer.h",
-				sourceHDCommonUtilitiesPath .. "HD_ScopedTimer.cpp"
-			}
-		}
-group("")
+	filter("configurations:Retail")
+		defines("_RETAIL")
+	
+	filter({})
 	
 project("BlipBlop")
-	dependson("HD_CommonUtilities")
+	dependson("External")
 	kind("StaticLib")
 	language("C++")
 	cppdialect("C++17")
 	
 	targetname("BlipBlop_$(Configuration)")
-	targetdir("$(SolutionDir)Lib")
+	targetdir("$(SolutionDir)Output/BlipBlop")
 	objdir("$(SolutionDir)Intermediate/BlipBlop")
-	location(sourceBlipBlopFolder)
-	files({ sourceBlipBlopPath .. "*.h", sourceBlipBlopPath .. "*.cpp", sourceBlipBlopPath .. "*.hlsli", sourceBlipBlopPath .. "*.hlsl", sourceBlipBlopPath .. "*.natvis" })
+	location(projectFilesBlipBlopFolder)
 	pchheader("stdafx.h")
 	pchsource(sourceBlipBlopPath .. "stdafx.cpp")
+	files
+	{
+		sourceBlipBlopPath .. "**.h",
+		sourceBlipBlopPath .. "**.cpp",
+		sourceBlipBlopPath .. "**.hlsli",
+		sourceBlipBlopPath .. "**.hlsl"
+	}
 	
-	libdirs("$(SolutionDir)Lib")
-	links({ "HD_CommonUtilities_$(Configuration)", "d3d11", "DXGI", "dxguid" })
-	includedirs("$(SolutionDir)Source/HD_CommonUtilities")
+	libdirs("$(SolutionDir)Output/External")
+	links({ "External_$(Configuration)", "d3d11", "DXGI", "dxguid" })
+	includedirs
+	{
+		"$(SolutionDir)Source/External/HD_CommonUtilities/Containers",
+		"$(SolutionDir)Source/External/HD_CommonUtilities/Math",
+		"$(SolutionDir)Source/External/HD_CommonUtilities/Misc",
+		"$(SolutionDir)Source/External/HD_CommonUtilities/Profiling",
+		"$(SolutionDir)Source/BlipBlop",
+		"$(SolutionDir)Source/BlipBlop/GraphicsEngine",
+		"$(SolutionDir)Source/BlipBlop/Objects",
+		"$(SolutionDir)Source/BlipBlop/RHI"
+	}
 		
 	warnings("Extra")
 	fatalwarnings("All")
@@ -121,62 +97,54 @@ project("BlipBlop")
 
 	shadervariablename("TEMP_%%(Filename)_ByteCode")
 	shaderheaderfileoutput("$(SolutionDir)Source/BlipBlop/TemporaryShaders/%%(Filename).h")
-	shaderobjectfileoutput("$(SolutionDir)Output/CompiledShaders/%%(Filename).cso")
+	shaderobjectfileoutput("$(SolutionDir)Output/BlipBlop/CompiledShaders/%%(Filename).cso")
 	shaderoptions("/WX")
 
 	filter("configurations:Retail")
 		defines("_RETAIL")
 	
-	filter("files:" .. sourceBlipBlopPath .. "VS_*.hlsl")
+	filter("files:" .. sourceBlipBlopPath .. "Shaders/" .. "VS_*.hlsl")
 		shadertype("Vertex")
 		
-	filter("files:" .. sourceBlipBlopPath .. "PS_*.hlsl")
+	filter("files:" .. sourceBlipBlopPath .. "Shaders/" .. "PS_*.hlsl")
 		shadertype("Pixel")
+		
+	filter("files:" .. sourceExternalPath .. "**.natvis")
+		buildaction("Natvis")
 	
 	filter({})
 	
-	vpaths
-	{
-		["Objects"] =
-		{
-			sourceBlipBlopPath .. "Buffer.h",
-			sourceBlipBlopPath .. "Buffer.cpp",
-			sourceBlipBlopPath .. "Texture.h",
-			sourceBlipBlopPath .. "Texture.cpp",
-			sourceBlipBlopPath .. "Vertex.h",
-			sourceBlipBlopPath .. "Vertex.cpp"
-		},
-		["RHI"] =
-		{
-			sourceBlipBlopPath .. "RenderHardwareInterface.h",
-			sourceBlipBlopPath .. "RenderHardwareInterface.cpp",
-			sourceBlipBlopPath .. "RHIStructs.h"
-		},
-		["Shaders"] =
-		{
-			sourceBlipBlopPath .. "Common.hlsli",
-			sourceBlipBlopPath .. "VS_VertexShader.hlsl",
-			sourceBlipBlopPath .. "PS_PixelShader.hlsl"
-		}
-	}
-	
 project("ModelViewer")
-	dependson({ "HD_CommonUtilities", "BlipBlop" })
+	dependson({ "External", "BlipBlop" })
 	kind("WindowedApp")
 	language("C++")
 	cppdialect("C++17")
 	
 	targetname("ModelViewer_$(Configuration)")
-	targetdir("$(SolutionDir)Output")
+	targetdir("$(SolutionDir)Output/ModelViewer")
 	objdir("$(SolutionDir)Intermediate/ModelViewer")
-	location(sourceModelViewerFolder)
-	files({ sourceModelViewerPath .. "*.h", sourceModelViewerPath .. "*.cpp" })
+	location(projectFilesModelViewerFolder)
 	pchheader("stdafx.h")
 	pchsource(sourceModelViewerPath .. "stdafx.cpp")
+	files
+	{
+		sourceModelViewerPath .. "**.h",
+		sourceModelViewerPath .. "**.cpp"
+	}
 	
-	libdirs("$(SolutionDir)Lib")
-	links({ "HD_CommonUtilities_$(Configuration)", "BlipBlop_$(Configuration)" })
-	includedirs({ "$(SolutionDir)Source/HD_CommonUtilities", "$(SolutionDir)Source/BlipBlop" })
+	libdirs({"$(SolutionDir)Output/External", "$(SolutionDir)Output/BlipBlop"})
+	links({ "External_$(Configuration)", "BlipBlop_$(Configuration)" })
+	includedirs
+	{
+		"$(SolutionDir)Source/External/HD_CommonUtilities/Containers",
+		"$(SolutionDir)Source/External/HD_CommonUtilities/Math",
+		"$(SolutionDir)Source/External/HD_CommonUtilities/Misc",
+		"$(SolutionDir)Source/External/HD_CommonUtilities/Profiling",
+		"$(SolutionDir)Source/BlipBlop",
+		"$(SolutionDir)Source/BlipBlop/GraphicsEngine",
+		"$(SolutionDir)Source/BlipBlop/Objects",
+		"$(SolutionDir)Source/BlipBlop/RHI"
+	}
 	
 	warnings("Extra")
 	fatalwarnings("All")
@@ -184,5 +152,8 @@ project("ModelViewer")
 
 	filter("configurations:Retail")
 		defines("_RETAIL")
+		
+	filter("files:" .. sourceExternalPath .. "**.natvis")
+		buildaction("Natvis")
 	
 	filter({})

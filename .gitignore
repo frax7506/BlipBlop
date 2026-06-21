@@ -2,7 +2,6 @@
 *.sln
 
 /Intermediate
-/Lib
 /Output
 /ProjectFiles
 
