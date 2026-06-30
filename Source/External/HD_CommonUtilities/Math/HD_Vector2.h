@@ -13,6 +13,8 @@ public:
 	T Length() const;
 	T Length2() const;
 
+	void SetLength(T aLength);
+
 	void Normalize();
 	HD_Vector2 GetNormalized() const;
 
@@ -84,6 +86,13 @@ template<typename T>
 T HD_Vector2<T>::Length2() const
 {
 	return myX * myX + myY * myY;
+}
+
+template<typename T>
+void HD_Vector2<T>::SetLength(T aLength)
+{
+	Normalize();
+	(*this) *= aLength;
 }
 
 template<typename T>
@@ -190,11 +199,12 @@ HD_Vector2<T> operator/(const HD_Vector2<T>& aVector, T aScalar)
 }
 
 typedef HD_Vector2<float> HD_Vector2f;
+typedef HD_Vector2<double> HD_Vector2d;
 typedef HD_Vector2<int> HD_Vector2i;
 typedef HD_Vector2<unsigned int> HD_Vector2ui;
 
-template <> const HD_Vector2<float> HD_Vector2<float>::Zero = { 0.f, 0.f };
-template <> const HD_Vector2<float> HD_Vector2<float>::Up = { 0.f, 1.f };
-template <> const HD_Vector2<float> HD_Vector2<float>::Down = { 0.f, -1.f };
-template <> const HD_Vector2<float> HD_Vector2<float>::Left = { -1.f, 0.f };
-template <> const HD_Vector2<float> HD_Vector2<float>::Right = { 1.f, 0.f };
+template<> const HD_Vector2<float> HD_Vector2<float>::Zero = { 0.f, 0.f };
+template<> const HD_Vector2<float> HD_Vector2<float>::Up = { 0.f, 1.f };
+template<> const HD_Vector2<float> HD_Vector2<float>::Down = { 0.f, -1.f };
+template<> const HD_Vector2<float> HD_Vector2<float>::Left = { -1.f, 0.f };
+template<> const HD_Vector2<float> HD_Vector2<float>::Right = { 1.f, 0.f };

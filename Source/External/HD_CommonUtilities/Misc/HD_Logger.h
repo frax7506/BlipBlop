@@ -75,8 +75,8 @@ public:
 class HD_Logger : public HD_Singleton<HD_Logger>
 {
 public:
-	HD_Logger();
-	~HD_Logger();
+	void Init();
+	void DeInit();
 
 	void Log(const char* aLogMessage, eLogLevel aLogLevel);
 	void Log(const wchar_t* aLogMessage, eLogLevel aLogLevel);

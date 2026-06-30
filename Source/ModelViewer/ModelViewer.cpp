@@ -50,6 +50,11 @@ bool ModelViewer::Init(SIZE aWindowSize, WNDPROC aWindowProcess, LPCWSTR aWindow
 			return false;
 	}
 
+	{
+		// Init system that need the window handle
+		HD_InputManager::GetInstance().Init(myMainWindowHandle);
+	}
+
 	LOG_MESSAGE("ModelViewer ready!");
 
 	// Show our program window and give it focus.
@@ -78,7 +83,7 @@ int ModelViewer::Run()
 				myIsRunning = false;
 			}
 
-			// TODO: CU Input Manager is updated here.
+			HD_InputManager::GetInstance().Update();
 		}
 
 		// TODO: Frame Update and Rendering goes here

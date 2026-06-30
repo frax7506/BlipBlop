@@ -28,19 +28,25 @@ public:
 	HD_Matrix4x4& operator=(const HD_Matrix3x3<T>& aMatrix);
 	HD_Matrix4x4& operator=(std::initializer_list<T> aInitializerList);
 
-	T& operator()(int aRow, int aCol);
-	const T& operator()(int aRow, int aCol) const;
-
 	HD_Matrix4x4& operator+=(const HD_Matrix4x4& aMatrix);
 	HD_Matrix4x4& operator-=(const HD_Matrix4x4& aMatrix);
 	HD_Matrix4x4& operator*=(const HD_Matrix4x4& aMatrix);
 
-	void ScaleInX(T aScalar);
-	void ScaleInY(T aScalar);
-	void ScaleInZ(T aScalar);
+	void SetScaleInX(T aScalar);
+	void SetScaleInY(T aScalar);
+	void SetScaleInZ(T aScalar);
 
-	bool operator==(const HD_Matrix4x4& aMatrix) const;
-	bool operator!=(const HD_Matrix4x4& aMatrix) const;
+	void SetRotationAroundX(T aAngleInRadians);
+	void SetRotationAroundY(T aAngleInRadians);
+	void SetRotationAroundZ(T aAngleInRadians);
+
+	void SetPositionX(T aValue);
+	void SetPositionY(T aValue);
+	void SetPositionZ(T aValue);
+	void SetPosition(const HD_Vector3<T>& aPosition);
+
+	T& operator()(int aRow, int aCol);
+	const T& operator()(int aRow, int aCol) const;
 
 	HD_Vector3<T> GetRightVector() const;
 	HD_Vector3<T> GetUpVector() const;
@@ -84,11 +90,13 @@ template<typename T> HD_Matrix4x4<T> operator*(const HD_Matrix4x4<T>& aMatrix0, 
 template<typename T> HD_Matrix4x4<T> operator*(const HD_Matrix4x4<T>& aMatrix, T aScalar);
 template<typename T> HD_Matrix4x4<T> operator*(T aScalar, const HD_Matrix4x4<T>& aMatrix);
 template<typename T> HD_Vector4<T> operator*(const HD_Vector4<T>& aVector, const HD_Matrix4x4<T>& aMatrix);
+template<typename T> bool operator==(const HD_Matrix4x4<T>& aMatrix0, const HD_Matrix4x4<T>& aMatrix1);
+template<typename T> bool operator!=(const HD_Matrix4x4<T>& aMatrix0, const HD_Matrix4x4<T>& aMatrix1);
 
 template<typename T>
 HD_Matrix4x4<T>::HD_Matrix4x4()
-	: m11(), m12(), m13(), m14(), m21(), m22(), m23(), m24(), m31(), m32(), m33(), m34(), m41(), m42(), m43(), m44()
 {
+	(*this) = Identity;
 }
 
 template<typename T>
@@ -132,20 +140,6 @@ HD_Matrix4x4<T>& HD_Matrix4x4<T>::operator=(std::initializer_list<T> aInitialize
 	assert(aInitializerList.size() == 16);
 	memcpy(&m11, aInitializerList.begin(), 4 * 4 * sizeof(T));
 	return *this;
-}
-
-template<typename T>
-T& HD_Matrix4x4<T>::operator()(int aRow, int aCol)
-{
-	assert(1 <= aRow && aRow <= 4 && 1 <= aCol && aCol <= 4);
-	return *(&m11 + ((aRow - 1) * 4) + (aCol - 1));
-}
-
-template<typename T>
-const T& HD_Matrix4x4<T>::operator()(int aRow, int aCol) const
-{
-	assert(1 <= aRow && aRow <= 4 && 1 <= aCol && aCol <= 4);
-	return *(&m11 + ((aRow - 1) * 4) + (aCol - 1));
 }
 
 template<typename T>
@@ -231,54 +225,103 @@ HD_Matrix4x4<T>& HD_Matrix4x4<T>::operator*=(const HD_Matrix4x4& aMatrix)
 }
 
 template<typename T>
-void HD_Matrix4x4<T>::ScaleInX(T aScalar)
+void HD_Matrix4x4<T>::SetScaleInX(T aScalar)
 {
-	m11 *= aScalar;
-	m12 *= aScalar;
-	m13 *= aScalar;
+	HD_Vector3<T> rightVector = GetRightVector();
+	rightVector.SetLength(aScalar);
+	m11 = rightVector.myX;
+	m12 = rightVector.myY;
+	m13 = rightVector.myZ;
 }
 
 template<typename T>
-void HD_Matrix4x4<T>::ScaleInY(T aScalar)
+void HD_Matrix4x4<T>::SetScaleInY(T aScalar)
 {
-	m21 *= aScalar;
-	m22 *= aScalar;
-	m23 *= aScalar;
+	HD_Vector3<T> upVector = GetUpVector();
+	upVector.SetLength(aScalar);
+	m21 = upVector.myX;
+	m22 = upVector.myY;
+	m23 = upVector.myZ;
 }
 
 template<typename T>
-void HD_Matrix4x4<T>::ScaleInZ(T aScalar)
+void HD_Matrix4x4<T>::SetScaleInZ(T aScalar)
 {
-	m31 *= aScalar;
-	m32 *= aScalar;
-	m33 *= aScalar;
+	HD_Vector3<T> forwardVector = GetForwardVector();
+	forwardVector.SetLength(aScalar);
+	m31 = forwardVector.myX;
+	m32 = forwardVector.myY;
+	m33 = forwardVector.myZ;
 }
 
 template<typename T>
-bool HD_Matrix4x4<T>::operator==(const HD_Matrix4x4& aMatrix) const
+void HD_Matrix4x4<T>::SetRotationAroundX(T aAngleInRadians)
 {
-	return	HD_ARE_FLOAT_VALUES_CLOSE(m11, aMatrix.m11) &&
-			HD_ARE_FLOAT_VALUES_CLOSE(m12, aMatrix.m12) &&
-			HD_ARE_FLOAT_VALUES_CLOSE(m13, aMatrix.m13) &&
-			HD_ARE_FLOAT_VALUES_CLOSE(m14, aMatrix.m14) &&
-			HD_ARE_FLOAT_VALUES_CLOSE(m21, aMatrix.m21) &&
-			HD_ARE_FLOAT_VALUES_CLOSE(m22, aMatrix.m22) &&
-			HD_ARE_FLOAT_VALUES_CLOSE(m23, aMatrix.m23) &&
-			HD_ARE_FLOAT_VALUES_CLOSE(m24, aMatrix.m24) &&
-			HD_ARE_FLOAT_VALUES_CLOSE(m31, aMatrix.m31) &&
-			HD_ARE_FLOAT_VALUES_CLOSE(m32, aMatrix.m32) &&
-			HD_ARE_FLOAT_VALUES_CLOSE(m33, aMatrix.m33) &&
-			HD_ARE_FLOAT_VALUES_CLOSE(m34, aMatrix.m34) &&
-			HD_ARE_FLOAT_VALUES_CLOSE(m41, aMatrix.m41) &&
-			HD_ARE_FLOAT_VALUES_CLOSE(m42, aMatrix.m42) &&
-			HD_ARE_FLOAT_VALUES_CLOSE(m43, aMatrix.m43) &&
-			HD_ARE_FLOAT_VALUES_CLOSE(m44, aMatrix.m44);
+	T currentRotationAroundX = GetRotationAroundX();
+	T angleDiff = aAngleInRadians - currentRotationAroundX;
+
+	HD_Matrix4x4 rotation = CreateRotationAroundX(angleDiff);
+	(*this) *= rotation;
 }
 
 template<typename T>
-bool HD_Matrix4x4<T>::operator!=(const HD_Matrix4x4& aMatrix) const
+void HD_Matrix4x4<T>::SetRotationAroundY(T aAngleInRadians)
 {
-	return !((*this) == aMatrix);
+	T currentRotationAroundY = GetRotationAroundY();
+	T angleDiff = aAngleInRadians - currentRotationAroundY;
+
+	HD_Matrix4x4 rotation = CreateRotationAroundY(angleDiff);
+	(*this) *= rotation;
+}
+
+template<typename T>
+void HD_Matrix4x4<T>::SetRotationAroundZ(T aAngleInRadians)
+{
+	T currentRotationAroundZ = GetRotationAroundZ();
+	T angleDiff = aAngleInRadians - currentRotationAroundZ;
+
+	HD_Matrix4x4 rotation = CreateRotationAroundZ(angleDiff);
+	(*this) *= rotation;
+}
+
+template<typename T>
+void HD_Matrix4x4<T>::SetPositionX(T aValue)
+{
+	m41 = aValue;
+}
+
+template<typename T>
+void HD_Matrix4x4<T>::SetPositionY(T aValue)
+{
+	m42 = aValue;
+}
+
+template<typename T>
+void HD_Matrix4x4<T>::SetPositionZ(T aValue)
+{
+	m43 = aValue;
+}
+
+template<typename T>
+void HD_Matrix4x4<T>::SetPosition(const HD_Vector3<T>& aPosition)
+{
+	m41 = aPosition.myX;
+	m42 = aPosition.myY;
+	m43 = aPosition.myZ;
+}
+
+template<typename T>
+T& HD_Matrix4x4<T>::operator()(int aRow, int aCol)
+{
+	assert(1 <= aRow && aRow <= 4 && 1 <= aCol && aCol <= 4);
+	return *(&m11 + ((aRow - 1) * 4) + (aCol - 1));
+}
+
+template<typename T>
+const T& HD_Matrix4x4<T>::operator()(int aRow, int aCol) const
+{
+	assert(1 <= aRow && aRow <= 4 && 1 <= aCol && aCol <= 4);
+	return *(&m11 + ((aRow - 1) * 4) + (aCol - 1));
 }
 
 template<typename T>
@@ -457,7 +500,7 @@ HD_Matrix4x4<T> HD_Matrix4x4<T>::GetFastInverse() const
 	HD_Matrix4x4 scaleInverse = CreateScale(1 / GetScaleInX(), 1 / GetScaleInY(), 1 / GetScaleInZ());
 
 	// At this point rotationInverse still holds a scaling as well. It's removed by normalizing its
-	// right and up vectors. Multiplying by scaleInverse doesn't work since CreateScale assumes no
+	// right, up and forward vectors. Multiplying by scaleInverse doesn't work since CreateScale assumes no
 	// rotation.
 	HD_Matrix4x4 rotationInverse = Get3x3().GetTranspose();
 	reinterpret_cast<HD_Vector3<T>*>(&rotationInverse.m11)->Normalize();
@@ -552,7 +595,7 @@ HD_Matrix4x4<T> HD_Matrix4x4<T>::CreateTranslation(T aX, T aY, T aZ)
 template<typename T>
 HD_Matrix4x4<T> operator+(const HD_Matrix4x4<T>& aMatrix0, const HD_Matrix4x4<T>& aMatrix1)
 {
-	HD_Matrix4x4 result =
+	HD_Matrix4x4<T> result =
 	{
 		aMatrix0.m11 + aMatrix1.m11, aMatrix0.m12 + aMatrix1.m12, aMatrix0.m13 + aMatrix1.m13, aMatrix0.m14 + aMatrix1.m14,
 		aMatrix0.m21 + aMatrix1.m21, aMatrix0.m22 + aMatrix1.m22, aMatrix0.m23 + aMatrix1.m23, aMatrix0.m24 + aMatrix1.m24,
@@ -566,7 +609,7 @@ HD_Matrix4x4<T> operator+(const HD_Matrix4x4<T>& aMatrix0, const HD_Matrix4x4<T>
 template<typename T>
 HD_Matrix4x4<T> operator-(const HD_Matrix4x4<T>& aMatrix0, const HD_Matrix4x4<T>& aMatrix1)
 {
-	HD_Matrix4x4 result =
+	HD_Matrix4x4<T> result =
 	{
 		aMatrix0.m11 - aMatrix1.m11, aMatrix0.m12 - aMatrix1.m12, aMatrix0.m13 - aMatrix1.m13, aMatrix0.m14 - aMatrix1.m14,
 		aMatrix0.m21 - aMatrix1.m21, aMatrix0.m22 - aMatrix1.m22, aMatrix0.m23 - aMatrix1.m23, aMatrix0.m24 - aMatrix1.m24,
@@ -580,7 +623,7 @@ HD_Matrix4x4<T> operator-(const HD_Matrix4x4<T>& aMatrix0, const HD_Matrix4x4<T>
 template<typename T>
 HD_Matrix4x4<T> operator*(const HD_Matrix4x4<T>& aMatrix0, const HD_Matrix4x4<T>& aMatrix1)
 {
-	HD_Matrix4x4 result =
+	HD_Matrix4x4<T> result =
 	{
 		aMatrix0.m11 * aMatrix1.m11 + aMatrix0.m12 * aMatrix1.m21 + aMatrix0.m13 * aMatrix1.m31 + aMatrix0.m14 * aMatrix1.m41,
 		aMatrix0.m11 * aMatrix1.m12 + aMatrix0.m12 * aMatrix1.m22 + aMatrix0.m13 * aMatrix1.m32 + aMatrix0.m14 * aMatrix1.m42,
@@ -609,7 +652,7 @@ HD_Matrix4x4<T> operator*(const HD_Matrix4x4<T>& aMatrix0, const HD_Matrix4x4<T>
 template<typename T>
 HD_Matrix4x4<T> operator*(const HD_Matrix4x4<T>& aMatrix, T aScalar)
 {
-	HD_Matrix4x4 result =
+	HD_Matrix4x4<T> result =
 	{
 		aMatrix.m11 * aScalar, aMatrix.m12 * aScalar, aMatrix.m13 * aScalar, aMatrix.m14 * aScalar,
 		aMatrix.m21 * aScalar, aMatrix.m22 * aScalar, aMatrix.m23 * aScalar, aMatrix.m24 * aScalar,
@@ -640,7 +683,35 @@ HD_Vector4<T> operator*(const HD_Vector4<T>& aVector, const HD_Matrix4x4<T>& aMa
 	return result;
 }
 
+template<typename T>
+bool operator==(const HD_Matrix4x4<T>& aMatrix0, const HD_Matrix4x4<T>& aMatrix1)
+{
+	return	HD_ARE_FLOAT_VALUES_CLOSE(aMatrix0.m11, aMatrix1.m11) &&
+		HD_ARE_FLOAT_VALUES_CLOSE(aMatrix0.m12, aMatrix1.m12) &&
+		HD_ARE_FLOAT_VALUES_CLOSE(aMatrix0.m13, aMatrix1.m13) &&
+		HD_ARE_FLOAT_VALUES_CLOSE(aMatrix0.m14, aMatrix1.m14) &&
+		HD_ARE_FLOAT_VALUES_CLOSE(aMatrix0.m21, aMatrix1.m21) &&
+		HD_ARE_FLOAT_VALUES_CLOSE(aMatrix0.m22, aMatrix1.m22) &&
+		HD_ARE_FLOAT_VALUES_CLOSE(aMatrix0.m23, aMatrix1.m23) &&
+		HD_ARE_FLOAT_VALUES_CLOSE(aMatrix0.m24, aMatrix1.m24) &&
+		HD_ARE_FLOAT_VALUES_CLOSE(aMatrix0.m31, aMatrix1.m31) &&
+		HD_ARE_FLOAT_VALUES_CLOSE(aMatrix0.m32, aMatrix1.m32) &&
+		HD_ARE_FLOAT_VALUES_CLOSE(aMatrix0.m33, aMatrix1.m33) &&
+		HD_ARE_FLOAT_VALUES_CLOSE(aMatrix0.m34, aMatrix1.m34) &&
+		HD_ARE_FLOAT_VALUES_CLOSE(aMatrix0.m41, aMatrix1.m41) &&
+		HD_ARE_FLOAT_VALUES_CLOSE(aMatrix0.m42, aMatrix1.m42) &&
+		HD_ARE_FLOAT_VALUES_CLOSE(aMatrix0.m43, aMatrix1.m43) &&
+		HD_ARE_FLOAT_VALUES_CLOSE(aMatrix0.m44, aMatrix1.m44);
+}
+
+template<typename T>
+bool operator!=(const HD_Matrix4x4<T>& aMatrix0, const HD_Matrix4x4<T>& aMatrix1)
+{
+	return !(aMatrix0 == aMatrix1);
+}
+
 typedef HD_Matrix4x4<float> HD_Matrix4x4f;
 typedef HD_Matrix4x4<double> HD_Matrix4x4d;
 
-template <> const HD_Matrix4x4<float> HD_Matrix4x4<float>::Identity = { 1.f, 0.f, 0.f, 0.f, 0.f, 1.f, 0.f, 0.f, 0.f, 0.f, 1.f, 0.f, 0.f, 0.f, 0.f, 1.f };
+template<> const HD_Matrix4x4<float> HD_Matrix4x4<float>::Identity = { 1.f, 0.f, 0.f, 0.f, 0.f, 1.f, 0.f, 0.f, 0.f, 0.f, 1.f, 0.f, 0.f, 0.f, 0.f, 1.f };
+template<> const HD_Matrix4x4<double> HD_Matrix4x4<double>::Identity = { 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0 };

@@ -29,22 +29,9 @@ public:
 
 	void Clear();
 
-	HD_Str operator+(const T* aString) const;
-	HD_Str operator+(const HD_Str& aString) const;
-
 	HD_Str& operator=(const T* aString);
 	HD_Str& operator=(const HD_Str& aString);
 	HD_Str& operator=(HD_Str&& aString);
-
-	bool operator==(const T* aString) const;
-	bool operator==(const HD_Str& aString) const;
-	bool operator!=(const T* aString) const;
-	bool operator!=(const HD_Str& aString) const;
-
-	bool operator<(const T* aString) const;
-	bool operator<(const HD_Str& aString) const;
-	bool operator>(const T* aString) const;
-	bool operator>(const HD_Str& aString) const;
 
 private:
 	static constexpr float ourGrowFactor = 1.5f;
@@ -57,9 +44,25 @@ private:
 	int myCapacity;
 };
 
-// Global operator for doing <string literal> + aString.
-template<typename T>
-HD_Str<T> operator+(const T* aString1, const HD_Str<T>& aString2);
+template<typename T> HD_Str<T> operator+(const HD_Str<T>& aString1, const HD_Str<T>& aString2);
+template<typename T> HD_Str<T> operator+(const HD_Str<T>& aString1, const T* aString2);
+template<typename T> HD_Str<T> operator+(const T* aString1, const HD_Str<T>& aString2);
+
+template<typename T> bool operator==(const HD_Str<T>& aString1, const HD_Str<T>& aString2);
+template<typename T> bool operator==(const HD_Str<T>& aString1, const T* aString2);
+template<typename T> bool operator==(const T* aString1, const HD_Str<T>& aString2);
+
+template<typename T> bool operator!=(const HD_Str<T>& aString1, const HD_Str<T>& aString2);
+template<typename T> bool operator!=(const HD_Str<T>& aString1, const T* aString2);
+template<typename T> bool operator!=(const T* aString1, const HD_Str<T>& aString2);
+
+template<typename T> bool operator<(const HD_Str<T>& aString1, const HD_Str<T>& aString2);
+template<typename T> bool operator<(const HD_Str<T>& aString1, const T* aString2);
+template<typename T> bool operator<(const T* aString1, const HD_Str<T>& aString2);
+
+template<typename T> bool operator>(const HD_Str<T>& aString1, const HD_Str<T>& aString2);
+template<typename T> bool operator>(const HD_Str<T>& aString1, const T* aString2);
+template<typename T> bool operator>(const T* aString1, const HD_Str<T>& aString2);
 
 template<typename T>
 HD_Str<T>::HD_Str()
@@ -163,20 +166,6 @@ void HD_Str<T>::Clear()
 }
 
 template<typename T>
-HD_Str<T> HD_Str<T>::operator+(const T* aString) const
-{
-	HD_Str result(*this);
-	result.Append(aString);
-	return result;
-}
-
-template<typename T>
-HD_Str<T> HD_Str<T>::operator+(const HD_Str& aString) const
-{
-	return (*this) + aString.GetBuffer();
-}
-
-template<typename T>
 HD_Str<T>& HD_Str<T>::operator=(const T* aString)
 {
 	if (!aString || (*aString) == 0)
@@ -225,65 +214,6 @@ HD_Str<T>& HD_Str<T>::operator=(HD_Str&& aString)
 }
 
 template<typename T>
-bool HD_Str<T>::operator==(const T* aString) const
-{
-	if (myData && aString)
-	{
-		return HD_Strcmp(myData, aString) == 0;
-	}
-	else if (!myData)
-	{
-		return (*aString) == 0;
-	}
-	else
-	{
-		return false;
-	}
-}
-
-template<typename T>
-bool HD_Str<T>::operator==(const HD_Str& aString) const
-{
-	return (*this) == aString.GetBuffer();
-}
-
-template<typename T>
-bool HD_Str<T>::operator!=(const T* aString) const
-{
-	return !((*this) == aString);
-}
-
-template<typename T>
-bool HD_Str<T>::operator!=(const HD_Str& aString) const
-{
-	return !((*this) == aString.GetBuffer());
-}
-
-template<typename T>
-bool HD_Str<T>::operator<(const T* aString) const
-{
-	return HD_Strcmp(myData, aString) < 0;
-}
-
-template<typename T>
-bool HD_Str<T>::operator<(const HD_Str& aString) const
-{
-	return (*this) < aString.myData;
-}
-
-template<typename T>
-bool HD_Str<T>::operator>(const T* aString) const
-{
-	return HD_Strcmp(myData, aString) > 0;
-}
-
-template<typename T>
-bool HD_Str<T>::operator>(const HD_Str& aString) const
-{
-	return (*this) > aString.myData;
-}
-
-template<typename T>
 void HD_Str<T>::CheckLengthAndGrowIfNecessary(int anAdditionalLength)
 {
 	if (myLength + anAdditionalLength > myCapacity - 1)
@@ -313,11 +243,116 @@ void HD_Str<T>::Grow(int aNewCapacity)
 }
 
 template<typename T>
-HD_Str<T> operator+(const T* aString1, const HD_Str<T>& aString2)
+HD_Str<T> operator+(const HD_Str<T>& aString1, const HD_Str<T>& aString2)
 {
-	HD_Str result(aString1);
+	HD_Str<T> result = aString1;
 	result.Append(aString2);
 	return result;
+}
+
+template<typename T>
+HD_Str<T> operator+(const HD_Str<T>& aString1, const T* aString2)
+{
+	HD_Str<T> result = aString1;
+	result.Append(aString2);
+	return result;
+}
+
+template<typename T>
+HD_Str<T> operator+(const T* aString1, const HD_Str<T>& aString2)
+{
+	HD_Str<T> result = aString1;
+	result.Append(aString2);
+	return result;
+}
+
+template<typename T>
+bool operator==(const HD_Str<T>& aString1, const HD_Str<T>& aString2)
+{
+	return aString1 == aString2.GetBuffer();
+}
+
+template<typename T>
+bool operator==(const HD_Str<T>& aString1, const T* aString2)
+{
+	bool isBufferInitialized = aString1.GetCapacity() > 0;
+
+	if (isBufferInitialized && aString2)
+	{
+		return HD_Strcmp(aString1.GetBuffer(), aString2) == 0;
+	}
+	else if (!isBufferInitialized && aString2)
+	{
+		return (*aString2) == 0;
+	}
+	else if (isBufferInitialized && !aString2)
+	{
+		return aString1.GetLength() == 0;
+	}
+	else
+	{
+		return true;
+	}
+}
+
+template<typename T>
+bool operator==(const T* aString1, const HD_Str<T>& aString2)
+{
+	return aString2 == aString1;
+}
+
+template<typename T>
+bool operator!=(const HD_Str<T>& aString1, const HD_Str<T>& aString2)
+{
+	return !(aString1 == aString2);
+}
+
+template<typename T>
+bool operator!=(const HD_Str<T>& aString1, const T* aString2)
+{
+	return !(aString1 == aString2);
+}
+
+template<typename T>
+bool operator!=(const T* aString1, const HD_Str<T>& aString2)
+{
+	return !(aString1 == aString2);
+}
+
+template<typename T>
+bool operator<(const HD_Str<T>& aString1, const HD_Str<T>& aString2)
+{
+	return HD_Strcmp(aString1.GetBuffer(), aString2.GetBuffer()) < 0;
+}
+
+template<typename T>
+bool operator<(const HD_Str<T>& aString1, const T* aString2)
+{
+	return HD_Strcmp(aString1.GetBuffer(), aString2) < 0;
+}
+
+template<typename T>
+bool operator<(const T* aString1, const HD_Str<T>& aString2)
+{
+	return HD_Strcmp(aString1, aString2.GetBuffer()) < 0;
+}
+
+template<typename T>
+bool operator>(const HD_Str<T>& aString1, const HD_Str<T>& aString2)
+{
+	return HD_Strcmp(aString1.GetBuffer(), aString2.GetBuffer()) > 0;
+}
+
+template<typename T>
+bool operator>(const HD_Str<T>& aString1, const T* aString2)
+{
+	return HD_Strcmp(aString1.GetBuffer(), aString2) > 0;
+}
+
+template<typename T>
+bool operator>(const T* aString1, const HD_Str<T>& aString2)
+{
+	return HD_Strcmp(aString1, aString2.GetBuffer()) > 0;
 }
 
 typedef HD_Str<char> HD_String;

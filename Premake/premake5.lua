@@ -137,6 +137,7 @@ project("ModelViewer")
 	includedirs
 	{
 		"$(SolutionDir)Source/External/HD_CommonUtilities/Containers",
+		"$(SolutionDir)Source/External/HD_CommonUtilities/Input",
 		"$(SolutionDir)Source/External/HD_CommonUtilities/Math",
 		"$(SolutionDir)Source/External/HD_CommonUtilities/Misc",
 		"$(SolutionDir)Source/External/HD_CommonUtilities/Profiling",

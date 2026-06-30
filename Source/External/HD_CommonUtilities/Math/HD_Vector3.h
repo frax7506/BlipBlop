@@ -16,6 +16,8 @@ public:
 	T Length() const;
 	T Length2() const;
 
+	void SetLength(T aLength);
+
 	void Normalize();
 	HD_Vector3 GetNormalized() const;
 
@@ -95,6 +97,13 @@ template<typename T>
 T HD_Vector3<T>::Length2() const
 {
 	return myX * myX + myY * myY + myZ * myZ;
+}
+
+template<typename T>
+void HD_Vector3<T>::SetLength(T aLength)
+{
+	Normalize();
+	(*this) *= aLength;
 }
 
 template<typename T>
@@ -225,13 +234,14 @@ HD_Vector3<T> operator/(const HD_Vector3<T>& aVector, T aScalar)
 }
 
 typedef HD_Vector3<float> HD_Vector3f;
+typedef HD_Vector3<double> HD_Vector3d;
 typedef HD_Vector3<int> HD_Vector3i;
 typedef HD_Vector3<unsigned int> HD_Vector3ui;
 
-template <> const HD_Vector3<float> HD_Vector3<float>::Zero = { 0.f, 0.f, 0.f };
-template <> const HD_Vector3<float> HD_Vector3<float>::Up = { 0.f, 1.f, 0.f };
-template <> const HD_Vector3<float> HD_Vector3<float>::Down = { 0.f, -1.f, 0.f };
-template <> const HD_Vector3<float> HD_Vector3<float>::Left = { -1.f, 0.f, 0.f };
-template <> const HD_Vector3<float> HD_Vector3<float>::Right = { 1.f, 0.f, 0.f };
-template <> const HD_Vector3<float> HD_Vector3<float>::Forward = { 0.f, 0.f, 1.f };
-template <> const HD_Vector3<float> HD_Vector3<float>::Back = { 0.f, 0.f, -1.f };
+template<> const HD_Vector3<float> HD_Vector3<float>::Zero = { 0.f, 0.f, 0.f };
+template<> const HD_Vector3<float> HD_Vector3<float>::Up = { 0.f, 1.f, 0.f };
+template<> const HD_Vector3<float> HD_Vector3<float>::Down = { 0.f, -1.f, 0.f };
+template<> const HD_Vector3<float> HD_Vector3<float>::Left = { -1.f, 0.f, 0.f };
+template<> const HD_Vector3<float> HD_Vector3<float>::Right = { 1.f, 0.f, 0.f };
+template<> const HD_Vector3<float> HD_Vector3<float>::Forward = { 0.f, 0.f, 1.f };
+template<> const HD_Vector3<float> HD_Vector3<float>::Back = { 0.f, 0.f, -1.f };

@@ -158,5 +158,6 @@ HD_Vector4<T> operator/(const HD_Vector4<T>& aVector, T aScalar)
 }
 
 typedef HD_Vector4<float> HD_Vector4f;
+typedef HD_Vector4<double> HD_Vector4d;
 typedef HD_Vector4<int> HD_Vector4i;
 typedef HD_Vector4<unsigned int> HD_Vector4ui;

@@ -1,19 +1,15 @@
 #include "HD_Random.h"
 
-float HD_Random::GetRandomFloat(float aMin, float aMax)
-{
-	HD_Random& random = GetInstance();
-	return random.myRndDist(random.myRndEngine) * (aMax - aMin) + aMin;
-}
+#include <random>
 
-HD_Random::HD_Random()
-	: myRndEngine(myRndSeed())
-	, myRndDist(std::uniform_real_distribution<float>(0.f, 1.f))
+namespace HD_Random
 {
-}
+	static std::random_device rndSeed;
+	static std::mt19937 rndEngine(rndSeed());
+	static std::uniform_real_distribution<float> rndDist(std::uniform_real_distribution<float>(0.f, 1.f));
 
-HD_Random& HD_Random::GetInstance()
-{
-	static HD_Random random;
-	return random;
+	float GetRandomFloat(float aMin, float aMax)
+	{
+		return rndDist(rndEngine) * (aMax - aMin) + aMin;
+	}
 }

@@ -29,18 +29,21 @@ public:
 	HD_Matrix3x3& operator=(const HD_Matrix4x4<T>& aMatrix);
 	HD_Matrix3x3& operator=(std::initializer_list<T> aInitializerList);
 
-	T& operator()(int aRow, int aCol);
-	const T& operator()(int aRow, int aCol) const;
-
 	HD_Matrix3x3& operator+=(const HD_Matrix3x3& aMatrix);
 	HD_Matrix3x3& operator-=(const HD_Matrix3x3& aMatrix);
 	HD_Matrix3x3& operator*=(const HD_Matrix3x3& aMatrix);
 
-	void ScaleInX(T aScalar);
-	void ScaleInY(T aScalar);
+	void SetScaleInX(T aScalar);
+	void SetScaleInY(T aScalar);
 
-	bool operator==(const HD_Matrix3x3& aMatrix) const;
-	bool operator!=(const HD_Matrix3x3& aMatrix) const;
+	void SetRotation(T aAngleInRadians);
+
+	void SetPositionX(T aValue);
+	void SetPositionY(T aValue);
+	void SetPosition(const HD_Vector2<T>& aPosition);
+
+	T& operator()(int aRow, int aCol);
+	const T& operator()(int aRow, int aCol) const;
 
 	HD_Vector2<T> GetRightVector() const;
 	HD_Vector2<T> GetUpVector() const;
@@ -75,11 +78,13 @@ template<typename T> HD_Matrix3x3<T> operator*(const HD_Matrix3x3<T>& aMatrix0, 
 template<typename T> HD_Matrix3x3<T> operator*(const HD_Matrix3x3<T>& aMatrix, T aScalar);
 template<typename T> HD_Matrix3x3<T> operator*(T aScalar, const HD_Matrix3x3<T>& aMatrix);
 template<typename T> HD_Vector3<T> operator*(const HD_Vector3<T>& aVector, const HD_Matrix3x3<T>& aMatrix);
+template<typename T> bool operator==(const HD_Matrix3x3<T>& aMatrix0, const HD_Matrix3x3<T>& aMatrix1);
+template<typename T> bool operator!=(const HD_Matrix3x3<T>& aMatrix0, const HD_Matrix3x3<T>& aMatrix1);
 
 template<typename T>
 HD_Matrix3x3<T>::HD_Matrix3x3()
-	: m11(), m12(), m13(), m21(), m22(), m23(), m31(), m32(), m33()
 {
+	(*this) = Identity;
 }
 
 template<typename T>
@@ -125,20 +130,6 @@ HD_Matrix3x3<T>& HD_Matrix3x3<T>::operator=(std::initializer_list<T> aInitialize
 }
 
 template<typename T>
-T& HD_Matrix3x3<T>::operator()(int aRow, int aCol)
-{
-	assert(1 <= aRow && aRow <= 3 && 1 <= aCol && aCol <= 3);
-	return *(&m11 + ((aRow - 1) * 3) + (aCol - 1));
-}
-
-template<typename T>
-const T& HD_Matrix3x3<T>::operator()(int aRow, int aCol) const
-{
-	assert(1 <= aRow && aRow <= 3 && 1 <= aCol && aCol <= 3);
-	return *(&m11 + ((aRow - 1) * 3) + (aCol - 1));
-}
-
-template<typename T>
 HD_Matrix3x3<T>& HD_Matrix3x3<T>::operator+=(const HD_Matrix3x3& aMatrix)
 {
 	m11 += aMatrix.m11;
@@ -178,37 +169,66 @@ HD_Matrix3x3<T>& HD_Matrix3x3<T>::operator*=(const HD_Matrix3x3& aMatrix)
 }
 
 template<typename T>
-void HD_Matrix3x3<T>::ScaleInX(T aScalar)
+void HD_Matrix3x3<T>::SetScaleInX(T aScalar)
 {
-	m11 *= aScalar;
-	m12 *= aScalar;
+	HD_Vector2<T> rightVector = GetRightVector();
+	rightVector.SetLength(aScalar);
+
+	m11 = rightVector.myX;
+	m12 = rightVector.myY;
 }
 
 template<typename T>
-void HD_Matrix3x3<T>::ScaleInY(T aScalar)
+void HD_Matrix3x3<T>::SetScaleInY(T aScalar)
 {
-	m21 *= aScalar;
-	m22 *= aScalar;
+	HD_Vector2<T> upVector = GetUpVector();
+	upVector.SetLength(aScalar);
+
+	m21 = upVector.myX;
+	m22 = upVector.myY;
 }
 
 template<typename T>
-bool HD_Matrix3x3<T>::operator==(const HD_Matrix3x3& aMatrix) const
+void HD_Matrix3x3<T>::SetRotation(T aAngleInRadians)
 {
-	return	HD_ARE_FLOAT_VALUES_CLOSE(m11, aMatrix.m11) &&
-			HD_ARE_FLOAT_VALUES_CLOSE(m12, aMatrix.m12) &&
-			HD_ARE_FLOAT_VALUES_CLOSE(m13, aMatrix.m13) &&
-			HD_ARE_FLOAT_VALUES_CLOSE(m21, aMatrix.m21) &&
-			HD_ARE_FLOAT_VALUES_CLOSE(m22, aMatrix.m22) &&
-			HD_ARE_FLOAT_VALUES_CLOSE(m23, aMatrix.m23) &&
-			HD_ARE_FLOAT_VALUES_CLOSE(m31, aMatrix.m31) &&
-			HD_ARE_FLOAT_VALUES_CLOSE(m32, aMatrix.m32) &&
-			HD_ARE_FLOAT_VALUES_CLOSE(m33, aMatrix.m33);
+	T currentRotation = GetRotation();
+	T angleDiff = aAngleInRadians - currentRotation;
+
+	HD_Matrix3x3 rotation = CreateRotation(angleDiff);
+	(*this) *= rotation;
 }
 
 template<typename T>
-bool HD_Matrix3x3<T>::operator!=(const HD_Matrix3x3& aMatrix) const
+void HD_Matrix3x3<T>::SetPositionX(T aValue)
 {
-	return !((*this) == aMatrix);
+	m31 = aValue;
+}
+
+template<typename T>
+void HD_Matrix3x3<T>::SetPositionY(T aValue)
+{
+	m32 = aValue;
+}
+
+template<typename T>
+void HD_Matrix3x3<T>::SetPosition(const HD_Vector2<T>& aPosition)
+{
+	m31 = aPosition.myX;
+	m32 = aPosition.myY;
+}
+
+template<typename T>
+T& HD_Matrix3x3<T>::operator()(int aRow, int aCol)
+{
+	assert(1 <= aRow && aRow <= 3 && 1 <= aCol && aCol <= 3);
+	return *(&m11 + ((aRow - 1) * 3) + (aCol - 1));
+}
+
+template<typename T>
+const T& HD_Matrix3x3<T>::operator()(int aRow, int aCol) const
+{
+	assert(1 <= aRow && aRow <= 3 && 1 <= aCol && aCol <= 3);
+	return *(&m11 + ((aRow - 1) * 3) + (aCol - 1));
 }
 
 template<typename T>
@@ -355,7 +375,7 @@ HD_Matrix3x3<T> HD_Matrix3x3<T>::CreateTranslation(T aX, T aY)
 template<typename T>
 HD_Matrix3x3<T> operator+(const HD_Matrix3x3<T>& aMatrix0, const HD_Matrix3x3<T>& aMatrix1)
 {
-	HD_Matrix3x3 result =
+	HD_Matrix3x3<T> result =
 	{
 		aMatrix0.m11 + aMatrix1.m11, aMatrix0.m12 + aMatrix1.m12, aMatrix0.m13 + aMatrix1.m13,
 		aMatrix0.m21 + aMatrix1.m21, aMatrix0.m22 + aMatrix1.m22, aMatrix0.m23 + aMatrix1.m23,
@@ -368,7 +388,7 @@ HD_Matrix3x3<T> operator+(const HD_Matrix3x3<T>& aMatrix0, const HD_Matrix3x3<T>
 template<typename T>
 HD_Matrix3x3<T> operator-(const HD_Matrix3x3<T>& aMatrix0, const HD_Matrix3x3<T>& aMatrix1)
 {
-	HD_Matrix3x3 result =
+	HD_Matrix3x3<T> result =
 	{
 		aMatrix0.m11 - aMatrix1.m11, aMatrix0.m12 - aMatrix1.m12, aMatrix0.m13 - aMatrix1.m13,
 		aMatrix0.m21 - aMatrix1.m21, aMatrix0.m22 - aMatrix1.m22, aMatrix0.m23 - aMatrix1.m23,
@@ -381,7 +401,7 @@ HD_Matrix3x3<T> operator-(const HD_Matrix3x3<T>& aMatrix0, const HD_Matrix3x3<T>
 template<typename T>
 HD_Matrix3x3<T> operator*(const HD_Matrix3x3<T>& aMatrix0, const HD_Matrix3x3<T>& aMatrix1)
 {
-	HD_Matrix3x3 result =
+	HD_Matrix3x3<T> result =
 	{
 		aMatrix0.m11 * aMatrix1.m11 + aMatrix0.m12 * aMatrix1.m21 + aMatrix0.m13 * aMatrix1.m31,
 		aMatrix0.m11 * aMatrix1.m12 + aMatrix0.m12 * aMatrix1.m22 + aMatrix0.m13 * aMatrix1.m32,
@@ -402,7 +422,7 @@ HD_Matrix3x3<T> operator*(const HD_Matrix3x3<T>& aMatrix0, const HD_Matrix3x3<T>
 template<typename T>
 HD_Matrix3x3<T> operator*(const HD_Matrix3x3<T>& aMatrix, T aScalar)
 {
-	HD_Matrix3x3 result =
+	HD_Matrix3x3<T> result =
 	{
 		aMatrix.m11 * aScalar, aMatrix.m12 * aScalar, aMatrix.m13 * aScalar,
 		aMatrix.m21 * aScalar, aMatrix.m22 * aScalar, aMatrix.m23 * aScalar,
@@ -421,7 +441,7 @@ HD_Matrix3x3<T> operator*(T aScalar, const HD_Matrix3x3<T>& aMatrix)
 template<typename T>
 HD_Vector3<T> operator*(const HD_Vector3<T>& aVector, const HD_Matrix3x3<T>& aMatrix)
 {
-	HD_Vector3 result
+	HD_Vector3<T> result
 	(
 		aVector.myX * aMatrix.m11 + aVector.myY * aMatrix.m21 + aVector.myZ * aMatrix.m31,
 		aVector.myX * aMatrix.m12 + aVector.myY * aMatrix.m22 + aVector.myZ * aMatrix.m32,
@@ -431,7 +451,28 @@ HD_Vector3<T> operator*(const HD_Vector3<T>& aVector, const HD_Matrix3x3<T>& aMa
 	return result;
 }
 
+template<typename T>
+bool operator==(const HD_Matrix3x3<T>& aMatrix0, const HD_Matrix3x3<T>& aMatrix1)
+{
+	return	HD_ARE_FLOAT_VALUES_CLOSE(aMatrix0.m11, aMatrix1.m11) &&
+		HD_ARE_FLOAT_VALUES_CLOSE(aMatrix0.m12, aMatrix1.m12) &&
+		HD_ARE_FLOAT_VALUES_CLOSE(aMatrix0.m13, aMatrix1.m13) &&
+		HD_ARE_FLOAT_VALUES_CLOSE(aMatrix0.m21, aMatrix1.m21) &&
+		HD_ARE_FLOAT_VALUES_CLOSE(aMatrix0.m22, aMatrix1.m22) &&
+		HD_ARE_FLOAT_VALUES_CLOSE(aMatrix0.m23, aMatrix1.m23) &&
+		HD_ARE_FLOAT_VALUES_CLOSE(aMatrix0.m31, aMatrix1.m31) &&
+		HD_ARE_FLOAT_VALUES_CLOSE(aMatrix0.m32, aMatrix1.m32) &&
+		HD_ARE_FLOAT_VALUES_CLOSE(aMatrix0.m33, aMatrix1.m33);
+}
+
+template<typename T>
+bool operator!=(const HD_Matrix3x3<T>& aMatrix0, const HD_Matrix3x3<T>& aMatrix1)
+{
+	return !(aMatrix0 == aMatrix1);
+}
+
 typedef HD_Matrix3x3<float> HD_Matrix3x3f;
 typedef HD_Matrix3x3<double> HD_Matrix3x3d;
 
-template <> const HD_Matrix3x3<float> HD_Matrix3x3<float>::Identity = { 1.f, 0.f, 0.f, 0.f, 1.f, 0.f, 0.f, 0.f, 1.f };
+template<> const HD_Matrix3x3<float> HD_Matrix3x3<float>::Identity = { 1.f, 0.f, 0.f, 0.f, 1.f, 0.f, 0.f, 0.f, 1.f };
+template<> const HD_Matrix3x3<double> HD_Matrix3x3<double>::Identity = { 1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0 };

@@ -1,9 +1,9 @@
 #pragma once
 
-typedef unsigned long long Time_t;
+typedef unsigned long long Time_Type;
 
 namespace HD_Time
 {
-	Time_t GetCurrentTimeMS();
-	Time_t GetCurrentTimeMicroseconds();
+	Time_Type GetCurrentTimeMS();
+	Time_Type GetCurrentTimeMicroseconds();
 }

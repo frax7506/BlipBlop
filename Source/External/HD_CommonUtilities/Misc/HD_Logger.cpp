@@ -153,14 +153,14 @@ HD_LogEntry& HD_LogEntry::operator=(HD_LogEntry&& aLogEntry)
 	return *this;
 }
 
-HD_Logger::HD_Logger()
-	: myIsRunning(true)
-	, myStdErrHandle(GetStdHandle(STD_ERROR_HANDLE))
+void HD_Logger::Init()
 {
+	myIsRunning = true;
+	myStdErrHandle = GetStdHandle(STD_ERROR_HANDLE);
 	myLogThread = std::thread(&HD_Logger::LogThread, this);
 }
 
-HD_Logger::~HD_Logger()
+void HD_Logger::DeInit()
 {
 	myIsRunning = false;
 	myLogEntriesConditionVariable.notify_all();

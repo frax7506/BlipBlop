@@ -38,30 +38,36 @@ int GuardedMain()
 	return modelViewer.Run();
 }
 
-int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
-	_In_opt_ HINSTANCE hPrevInstance,
-	_In_ LPWSTR lpCmdLine,
-	_In_ int nCmdShow)
+int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR lpCmdLine, _In_ int nCmdShow)
 {
 	UNREFERENCED_PARAMETER(hInstance);
 	UNREFERENCED_PARAMETER(hPrevInstance);
 	UNREFERENCED_PARAMETER(lpCmdLine);
 	UNREFERENCED_PARAMETER(nCmdShow);
 
+	HD_Logger::GetInstance().Init();
+
+	int returnValue = 0;
+
 	try
 	{
-		return GuardedMain();
+		returnValue = GuardedMain();
 	}
 	catch (const std::exception& aException)
 	{
 		HD_String message = aException.what();
 		LOG_ERROR_F("Exception caught: %s\n", message.GetBuffer());
-		return -1;
+		returnValue = -1;
 	}
+
+	HD_Logger::GetInstance().DeInit();
+	return returnValue;
 }
 
 LRESULT CALLBACK WinProc(_In_ HWND hWnd, _In_ UINT uMsg, _In_ WPARAM wParam, _In_ LPARAM lParam)
 {
+	HD_InputManager::GetInstance().UpdateEvents(uMsg, wParam, lParam);
+
 	if (uMsg == WM_DESTROY || uMsg == WM_CLOSE)
 	{
 		PostQuitMessage(0);
