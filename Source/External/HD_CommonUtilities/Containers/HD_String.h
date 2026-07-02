@@ -29,6 +29,8 @@ public:
 
 	void Clear();
 
+	void Reserve(int aLength);
+
 	HD_Str& operator=(const T* aString);
 	HD_Str& operator=(const HD_Str& aString);
 	HD_Str& operator=(HD_Str&& aString);
@@ -163,6 +165,16 @@ void HD_Str<T>::Clear()
 {
 	myLength = 0;
 	memset(myData, 0, myCapacity * sizeof(T));
+}
+
+template<typename T>
+void HD_Str<T>::Reserve(int aLength)
+{
+	if (aLength > myLength)
+	{
+		int additionalLength = aLength - myLength;
+		CheckLengthAndGrowIfNecessary(additionalLength);
+	}
 }
 
 template<typename T>

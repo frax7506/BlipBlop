@@ -1,7 +1,5 @@
 #pragma once
 
-#include "HD_Swap.h"
-
 #include <cassert>
 #include <cstring>
 #include <initializer_list>
@@ -261,7 +259,11 @@ void HD_Matrix4x4<T>::SetRotationAroundX(T aAngleInRadians)
 	T angleDiff = aAngleInRadians - currentRotationAroundX;
 
 	HD_Matrix4x4 rotation = CreateRotationAroundX(angleDiff);
+
+	HD_Vector3 position = GetPosition();
+	SetPosition({ 0, 0, 0 });
 	(*this) *= rotation;
+	SetPosition(position);
 }
 
 template<typename T>
@@ -271,7 +273,11 @@ void HD_Matrix4x4<T>::SetRotationAroundY(T aAngleInRadians)
 	T angleDiff = aAngleInRadians - currentRotationAroundY;
 
 	HD_Matrix4x4 rotation = CreateRotationAroundY(angleDiff);
+
+	HD_Vector3 position = GetPosition();
+	SetPosition({ 0, 0, 0 });
 	(*this) *= rotation;
+	SetPosition(position);
 }
 
 template<typename T>
@@ -281,7 +287,11 @@ void HD_Matrix4x4<T>::SetRotationAroundZ(T aAngleInRadians)
 	T angleDiff = aAngleInRadians - currentRotationAroundZ;
 
 	HD_Matrix4x4 rotation = CreateRotationAroundZ(angleDiff);
+
+	HD_Vector3 position = GetPosition();
+	SetPosition({ 0, 0, 0 });
 	(*this) *= rotation;
+	SetPosition(position);
 }
 
 template<typename T>

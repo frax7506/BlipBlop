@@ -1,6 +1,7 @@
 #pragma once
 
 #include "HD_Math.h"
+#include "HD_String.h"
 
 #include <cassert>
 #include <cstring>
@@ -32,6 +33,9 @@ public:
 	typedef BitRef<const HD_Bitset> ConstBitReference;
 
 public:
+	static constexpr int GetNrOfBytesNeededForNrOfBits(int aNrOfBits) { return (aNrOfBits % 8) == 0 ? (aNrOfBits / 8) : (aNrOfBits / 8) + 1; }
+	static constexpr int ourNrOfBytes = GetNrOfBytesNeededForNrOfBits(aSize);
+
 	HD_Bitset();
 	HD_Bitset(const HD_Bitset& aOther);
 	HD_Bitset(unsigned long long aValue);
@@ -39,6 +43,11 @@ public:
 	void EnableAllBits();
 	void DisableAllBits();
 	void FlipAllBits();
+
+	char* GetBuffer();
+	const char* GetBuffer() const;
+
+	const char* ToString() const;
 
 	BitReference operator[](int aIndex);
 	ConstBitReference operator[](int aIndex) const;
@@ -55,8 +64,6 @@ public:
 	HD_Bitset operator>>(int aValue) const;
 
 private:
-	static constexpr int GetNrOfBytesNeededForNrOfBits(int aNrOfBits) { return (aNrOfBits % 8) == 0 ? (aNrOfBits / 8) : (aNrOfBits / 8) + 1; }
-	static constexpr int ourNrOfBytes = GetNrOfBytesNeededForNrOfBits(aSize);
 
 	char myBits[ourNrOfBytes];
 };
@@ -106,6 +113,37 @@ void HD_Bitset<aSize>::FlipAllBits()
 	{
 		myBits[i] = ~myBits[i];
 	}
+}
+
+template<int aSize>
+char* HD_Bitset<aSize>::GetBuffer()
+{
+	return myBits;
+}
+
+template<int aSize>
+const char* HD_Bitset<aSize>::GetBuffer() const
+{
+	return myBits;
+}
+
+template<int aSize>
+const char* HD_Bitset<aSize>::ToString() const
+{
+	HD_String string;
+	for (int bitIndex = (ourNrOfBytes * 8) - 1; bitIndex >= 0; bitIndex--)
+	{
+		if ((*this)[bitIndex])
+		{
+			string.Append("1");
+		}
+		else
+		{
+			string.Append("0");
+		}
+	}
+
+	return string.GetBuffer();
 }
 
 template<int aSize>
